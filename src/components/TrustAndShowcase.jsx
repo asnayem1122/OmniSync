@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Testimonials from '@/components/ui/testimonials-13';
 import {
   ShieldCheck,
   Star,
@@ -160,53 +161,10 @@ export default function TrustAndShowcase({ onScheduleClick }) {
       </div>
 
       {/* ---------------------------------------------------- */}
-      {/* 2. Customer Reviews (Testimonials) */}
+      {/* 2. Customer Reviews (Testimonials-13 Marquee & Grid) */}
       {/* ---------------------------------------------------- */}
-      <div id="reviews-section" className="pt-6">
-        <div className="text-center max-w-2xl mx-auto mb-10">
-          <div className="contractor-tag mb-3">
-            <ThumbsUp className="w-3.5 h-3.5 text-emerald-600" />
-            <span>Verified Homeowners</span>
-          </div>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-            Trusted by Over 1,400 Modern Homes
-          </h2>
-          <p className="mt-2 text-sm text-slate-600 dark:text-slate-300 font-medium">
-            Read real feedback from clients who transformed their residential and commercial automation with OmniSync.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {TESTIMONIALS.map((t, idx) => (
-            <div
-              key={idx}
-              className="bg-white dark:bg-slate-800/90 p-6 sm:p-7 rounded-2xl border border-slate-200/90 dark:border-white/10 shadow-clean-card flex flex-col justify-between"
-            >
-              <div>
-                <div className="flex items-center gap-1 text-amber-500 mb-4">
-                  {[...Array(t.rating)].map((_, i) => (
-                    <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
-                  ))}
-                </div>
-                <p className="text-sm text-slate-700 dark:text-slate-200 leading-relaxed font-medium mb-6">
-                  "{t.text}"
-                </p>
-              </div>
-
-              <div className="flex items-center gap-3 pt-4 border-t border-slate-100 dark:border-white/5">
-                <img
-                  src={t.avatar}
-                  alt={t.name}
-                  className="w-10 h-10 rounded-full object-cover border border-slate-200 dark:border-slate-700"
-                />
-                <div>
-                  <h4 className="text-xs font-bold text-slate-900 dark:text-white">{t.name}</h4>
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">{t.location}</p>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+      <div id="reviews-section" className="pt-2">
+        <Testimonials />
       </div>
 
       {/* ---------------------------------------------------- */}
