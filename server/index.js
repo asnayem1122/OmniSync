@@ -12,17 +12,23 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 const isVercel = process.env.VERCEL === '1' || process.env.VERCEL === true;
 
-// Middlewares
-app.use(cors());
+// Middlewares - Open CORS for Vercel cross-origin frontend support
+app.use(
+  cors({
+    origin: '*',
+    methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  })
+);
 app.use(express.json());
 
 // Serverless DB Middleware: Ensure DB is connected & seeded before handling requests
 app.use(async (req, res, next) => {
   try {
-    await connectDB();
+    const conn = await connectDB();
 
-    // Auto-seed if running on empty collection (e.g. first run or in-memory)
-    if (req.path.startsWith('/api') && req.path !== '/api/health') {
+    // Auto-seed if running on empty collection and DB is available
+    if (conn && req.path !== '/' && req.path !== '/health' && req.path !== '/api/health') {
       const count = await Provider.countDocuments();
       if (count === 0) {
         console.log('📦 Auto-seeding initial smart home providers...');
@@ -30,34 +36,40 @@ app.use(async (req, res, next) => {
       }
     }
   } catch (err) {
-    console.error('Database connection / seeding notice:', err.message);
+    console.error('Database middleware notice:', err.message);
   }
   next();
 });
 
-// Health Check
-app.get('/api/health', (req, res) => {
+// Root & Health Checks
+app.get(['/', '/health', '/api/health'], (req, res) => {
   res.json({
     status: 'online',
     environment: isVercel ? 'vercel-serverless' : 'standalone-node',
     timestamp: new Date().toISOString(),
     service: 'Smart Home Service Automation API',
+    endpoints: {
+      match: '/api/match',
+      providers: '/api/providers',
+      requests: '/api/requests',
+    },
   });
 });
 
-// Mount Routes
+// Mount Routes on both '/api' and '/' for flexible Vercel routing
 app.use('/api', apiRoutes);
+app.use('/', apiRoutes);
 
 // Global Error Handler
 app.use((err, req, res, next) => {
-  console.error('Unhandled Error:', err);
+  console.error('Unhandled Server Error:', err);
   res.status(500).json({
     success: false,
     message: err.message || 'Internal Server Error',
   });
 });
 
-// Only listen on TCP port if not running in a serverless environment (like Vercel)
+// Only listen on a TCP port if running standalone (not on Vercel)
 if (!isVercel) {
   const startServer = async () => {
     try {
