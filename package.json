@@ -4,7 +4,7 @@
   "description": "Smart Home Service Automation MVP built with MERN stack and Horizon UI Glassmorphism",
   "type": "module",
   "scripts": {
-    "build": "npm --prefix client run build",
+    "build": "node scripts/build.js",
     "server": "npm --prefix server start",
     "server:dev": "npm --prefix server run dev",
     "client": "npm --prefix client run dev",
