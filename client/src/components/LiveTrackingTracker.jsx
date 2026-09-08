@@ -12,6 +12,9 @@ import {
   Play,
   RotateCcw,
   Check,
+  Star,
+  Award,
+  ThumbsUp,
 } from 'lucide-react';
 
 const PIPELINE_STEPS = [
@@ -52,6 +55,7 @@ export default function LiveTrackingTracker({
   onUpdateStatus,
   isUpdating,
   onNewRequest,
+  onOpenReviewModal,
 }) {
   if (!request) {
     return (
@@ -174,6 +178,57 @@ export default function LiveTrackingTracker({
             </div>
           </div>
         </div>
+
+        {/* Post-Completion Rating & Review Banner */}
+        {request.status === 'Completed' && (
+          <div className="mt-4 pt-6 border-t border-slate-200/80 dark:border-white/10">
+            {request.review && request.review.rating ? (
+              <div className="p-4 sm:p-5 rounded-2xl bg-[#EBF5F0] dark:bg-emerald-950/30 border border-emerald-300 dark:border-emerald-800/40 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-xs font-bold text-[#1E3A2B] dark:text-emerald-300">
+                      ★ Service Verified & Rated
+                    </span>
+                    <div className="flex text-amber-500">
+                      {[...Array(request.review.rating)].map((_, i) => (
+                        <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                      ))}
+                    </div>
+                  </div>
+                  <p className="text-xs text-slate-700 dark:text-slate-300 font-medium">
+                    "{request.review.comment}"
+                  </p>
+                </div>
+                <div className="text-[11px] font-extrabold text-emerald-800 dark:text-emerald-300 bg-white/80 dark:bg-slate-900/60 px-3 py-1 rounded-xl shadow-xs shrink-0">
+                  Overall Score Recalculated
+                </div>
+              </div>
+            ) : (
+              <div className="p-4 sm:p-6 rounded-2xl bg-gradient-to-r from-amber-500/10 via-emerald-500/10 to-teal-500/10 border border-amber-400/40 dark:border-emerald-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <Award className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                    <span className="text-xs font-extrabold uppercase tracking-wider text-slate-900 dark:text-white">
+                      Task Completed Successfully!
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-600 dark:text-slate-300 font-medium">
+                    How was your experience with <strong>{request.assignedProvider?.name || 'the specialist'}</strong>? Your rating directly updates their overall technician score.
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => onOpenReviewModal?.(request)}
+                  className="forest-pill-btn px-5 py-2.5 text-xs font-bold gap-2 cursor-pointer shadow-md shrink-0"
+                >
+                  <Star className="w-4 h-4 fill-amber-300 text-amber-300" />
+                  <span>Rate Specialist (1-5 ★)</span>
+                </button>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Grid: Assigned Provider Info & Status Simulator */}

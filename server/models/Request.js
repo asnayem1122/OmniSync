@@ -112,6 +112,20 @@ const RequestSchema = new mongoose.Schema(
     },
     matchedProviders: [MatchedProviderSummarySchema],
     statusHistory: [StatusHistorySchema],
+    review: {
+      rating: {
+        type: Number,
+        min: 1,
+        max: 5,
+      },
+      comment: {
+        type: String,
+        default: '',
+      },
+      createdAt: {
+        type: Date,
+      },
+    },
   },
   {
     timestamps: true,

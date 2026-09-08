@@ -74,16 +74,17 @@ export default function ServiceRequestForm({
   isLoading,
   initialCategory,
   initialUrgency,
+  currentUser,
 }) {
   const [selectedCategory, setSelectedCategory] = useState(
     initialCategory || CATEGORIES[0].id
   );
-  const [customerName, setCustomerName] = useState('Alex Rivera');
-  const [customerPhone, setCustomerPhone] = useState('+1 (512) 555-4829');
-  const [customerEmail, setCustomerEmail] = useState('alex.rivera@homemail.com');
+  const [customerName, setCustomerName] = useState(currentUser?.name || 'Alex Rivera');
+  const [customerPhone, setCustomerPhone] = useState(currentUser?.phone || '+1 (512) 555-4829');
+  const [customerEmail, setCustomerEmail] = useState(currentUser?.email || 'alex.rivera@homemail.com');
 
   const [selectedPreset, setSelectedPreset] = useState(LOCATION_PRESETS[0]);
-  const [customAddress, setCustomAddress] = useState(LOCATION_PRESETS[0].address);
+  const [customAddress, setCustomAddress] = useState(currentUser?.address || LOCATION_PRESETS[0].address);
 
   const [urgency, setUrgency] = useState(initialUrgency || 'High');
   const [filterCollisions, setFilterCollisions] = useState(true);
@@ -95,6 +96,16 @@ export default function ServiceRequestForm({
   const [timePreset, setTimePreset] = useState('immediate');
   const [customStart, setCustomStart] = useState('');
   const [customEnd, setCustomEnd] = useState('');
+
+  // Sync with currentUser if logged in
+  useEffect(() => {
+    if (currentUser && currentUser.role === 'customer') {
+      if (currentUser.name) setCustomerName(currentUser.name);
+      if (currentUser.phone) setCustomerPhone(currentUser.phone);
+      if (currentUser.email) setCustomerEmail(currentUser.email);
+      if (currentUser.address) setCustomAddress(currentUser.address);
+    }
+  }, [currentUser]);
 
   // Sync with external initial props if passed
   useEffect(() => {

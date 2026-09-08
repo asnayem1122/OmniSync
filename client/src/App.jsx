@@ -10,6 +10,8 @@ import LiveTrackingTracker from './components/LiveTrackingTracker';
 import ProviderDirectory from './components/ProviderDirectory';
 import ProviderDashboard from './components/ProviderDashboard';
 import Footer from './components/Footer';
+import AuthModal from './components/AuthModal';
+import RatingReviewModal from './components/RatingReviewModal';
 
 const API_BASE = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
 
@@ -17,6 +19,22 @@ export default function App() {
   const [theme, setTheme] = useState(() => {
     return localStorage.getItem('omnisync-theme') || 'light';
   });
+
+  // Authenticated User Session
+  const [currentUser, setCurrentUser] = useState(() => {
+    try {
+      const saved = localStorage.getItem('omnisync-user');
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  });
+
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isRatingModalOpen, setIsRatingModalOpen] = useState(false);
+  const [reviewTargetRequest, setReviewTargetRequest] = useState(null);
+  const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+
   const [activeTab, setActiveTab] = useState('request'); // 'request' | 'recommendations' | 'tracking' | 'providers' | 'provider-dashboard'
   const [providers, setProviders] = useState([]);
   const [requests, setRequests] = useState([]);
@@ -43,6 +61,15 @@ export default function App() {
       document.documentElement.classList.remove('dark');
     }
   }, [theme]);
+
+  // Sync currentUser to localStorage
+  useEffect(() => {
+    if (currentUser) {
+      localStorage.setItem('omnisync-user', JSON.stringify(currentUser));
+    } else {
+      localStorage.removeItem('omnisync-user');
+    }
+  }, [currentUser]);
 
   // 1. Fetch initial providers and requests
   const fetchProviders = async () => {
@@ -97,6 +124,19 @@ export default function App() {
     setFormCategory(category);
     setFormUrgency(urgency);
     scrollToBooking();
+  };
+
+  // Auth Handlers
+  const handleLoginSuccess = (userData) => {
+    setCurrentUser(userData);
+    if (userData.role === 'provider') {
+      setActiveTab('provider-dashboard');
+    }
+  };
+
+  const handleLogout = () => {
+    setCurrentUser(null);
+    setActiveTab('request');
   };
 
   // 2. Submit Request to Matching Engine (Customer)
@@ -196,6 +236,12 @@ export default function App() {
       setActiveRequest(data.data);
       fetchProviders();
       fetchRequests();
+
+      // If status transitioned to Completed, prompt rating review
+      if (nextStatus === 'Completed' && !data.data.review?.rating) {
+        setReviewTargetRequest(data.data);
+        setIsRatingModalOpen(true);
+      }
     } catch (err) {
       console.error('Status update error:', err);
       setErrorBanner(err.message);
@@ -204,16 +250,45 @@ export default function App() {
     }
   };
 
-  // 5. Provider Accepts Job from Queue
+  // 5. Submit Rating & Review after completion
+  const handleSubmitReview = async (requestId, rating, comment) => {
+    setIsSubmittingReview(true);
+    try {
+      const res = await fetch(`${API_BASE}/api/requests/${requestId}/review`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ rating, comment }),
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.message || 'Failed to submit review');
+      }
+
+      setActiveRequest(data.data);
+      setIsRatingModalOpen(false);
+      setReviewTargetRequest(null);
+      fetchProviders();
+      fetchRequests();
+    } catch (err) {
+      console.error('Review error:', err);
+      setErrorBanner(err.message);
+    } finally {
+      setIsSubmittingReview(false);
+    }
+  };
+
+  // 6. Provider Accepts Job from Queue
   const handleProviderAcceptJob = async (job, provider) => {
     setIsUpdating(true);
     try {
+      const assignedId = provider?._id || currentProviderId || job.assignedProvider?._id;
       const res = await fetch(`${API_BASE}/api/requests/${job._id}/status`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           status: 'Accepted',
-          providerId: provider?._id || job.assignedProvider?._id,
+          providerId: assignedId,
           note: `Technician accepted job from incoming dispatch queue.`,
         }),
       });
@@ -234,7 +309,7 @@ export default function App() {
     }
   };
 
-  // 6. Provider Adds Manual Blocked Slot
+  // 7. Provider Adds Manual Blocked Slot
   const handleAddManualSlot = async (providerId, slotData) => {
     setIsUpdating(true);
     try {
@@ -260,6 +335,11 @@ export default function App() {
 
   const pendingRequestsCount = requests.filter((r) => r.status === 'Requested').length;
 
+  const currentProviderId =
+    currentUser?.role === 'provider'
+      ? currentUser.providerId || currentUser.id
+      : providers[0]?._id;
+
   return (
     <div
       className={`relative min-h-screen ${
@@ -278,6 +358,9 @@ export default function App() {
           pendingJobsCount={pendingRequestsCount}
           theme={theme}
           setTheme={setTheme}
+          currentUser={currentUser}
+          onOpenAuthModal={() => setIsAuthModalOpen(true)}
+          onLogout={handleLogout}
         />
 
         {/* Global Error Banner */}
@@ -287,7 +370,7 @@ export default function App() {
               <span className="font-medium">{errorBanner}</span>
               <button
                 onClick={() => setErrorBanner(null)}
-                className="font-bold underline ml-4 hover:opacity-80"
+                className="font-bold underline ml-4 hover:opacity-80 cursor-pointer"
               >
                 Dismiss
               </button>
@@ -316,6 +399,7 @@ export default function App() {
                 isLoading={isLoading}
                 initialCategory={formCategory}
                 initialUrgency={formUrgency}
+                currentUser={currentUser}
               />
 
               {/* Trust, Before/After & Customer Reviews */}
@@ -342,6 +426,10 @@ export default function App() {
                 setActiveTab('request');
                 scrollToBooking();
               }}
+              onOpenReviewModal={(req) => {
+                setReviewTargetRequest(req);
+                setIsRatingModalOpen(true);
+              }}
             />
           )}
 
@@ -350,10 +438,16 @@ export default function App() {
               providers={providers}
               requests={requests}
               activeRequestId={activeRequest?._id}
-              onAcceptJob={(job) => handleProviderAcceptJob(job, providers[0])}
+              currentUser={currentUser}
+              onAcceptJob={(job) =>
+                handleProviderAcceptJob(
+                  job,
+                  providers.find((p) => String(p._id) === String(currentProviderId)) || providers[0]
+                )
+              }
               onUpdateJobStatus={handleUpdateStatus}
               onAddManualSlot={(slotData) =>
-                handleAddManualSlot(providers[0]?._id, slotData)
+                handleAddManualSlot(currentProviderId, slotData)
               }
               isProcessing={isUpdating}
             />
@@ -370,6 +464,26 @@ export default function App() {
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }}
         onScheduleClick={scrollToBooking}
+      />
+
+      {/* Auth Modal (Customer & Service Holder Login) */}
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        onLoginSuccess={handleLoginSuccess}
+        providers={providers}
+      />
+
+      {/* Post-Completion Rating & Review Modal */}
+      <RatingReviewModal
+        isOpen={isRatingModalOpen}
+        onClose={() => {
+          setIsRatingModalOpen(false);
+          setReviewTargetRequest(null);
+        }}
+        request={reviewTargetRequest}
+        onSubmitReview={handleSubmitReview}
+        isSubmitting={isSubmittingReview}
       />
     </div>
   );

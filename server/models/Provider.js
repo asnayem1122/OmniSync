@@ -94,6 +94,14 @@ const ProviderSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    earnings: {
+      type: Number,
+      default: 1480,
+    },
+    completedJobsCount: {
+      type: Number,
+      default: 18,
+    },
   },
   {
     timestamps: true,

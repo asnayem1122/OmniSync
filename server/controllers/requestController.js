@@ -233,3 +233,103 @@ export const updateRequestStatus = async (req, res) => {
     return res.status(500).json({ success: false, message: error.message });
   }
 };
+
+export const submitRequestReview = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { rating, comment } = req.body;
+
+    const numericRating = Number(rating);
+    if (!numericRating || numericRating < 1 || numericRating > 5) {
+      return res.status(400).json({ success: false, message: 'Rating must be between 1 and 5' });
+    }
+
+    if (mongoose.connection.readyState >= 1) {
+      const request = await Request.findById(id).populate('assignedProvider');
+      if (!request) {
+        return res.status(404).json({ success: false, message: 'Service request not found' });
+      }
+
+      if (request.status !== 'Completed') {
+        return res.status(400).json({
+          success: false,
+          message: 'Review can only be submitted after task completion',
+        });
+      }
+
+      if (request.review && request.review.rating) {
+        return res.status(400).json({
+          success: false,
+          message: 'Review has already been submitted for this request',
+        });
+      }
+
+      // Save review on request
+      request.review = {
+        rating: numericRating,
+        comment: comment || 'Service completed successfully.',
+        createdAt: new Date(),
+      };
+      await request.save();
+
+      // Recalculate provider overall rating
+      let updatedProvider = null;
+      if (request.assignedProvider) {
+        const provider = await Provider.findById(request.assignedProvider._id);
+        if (provider) {
+          const prevRating = provider.rating || 4.5;
+          const prevCount = provider.reviewsCount || 10;
+          
+          // Overall Rating Formula:
+          // newRating = ((prevRating * prevCount) + numericRating) / (prevCount + 1)
+          const newOverall = ((prevRating * prevCount) + numericRating) / (prevCount + 1);
+          provider.rating = Math.round(newOverall * 10) / 10;
+          provider.reviewsCount = prevCount + 1;
+          if (provider.completedJobsCount != null) {
+            provider.completedJobsCount += 1;
+          }
+          await provider.save();
+          updatedProvider = provider;
+        }
+      }
+
+      const refreshedRequest = await Request.findById(id).populate('assignedProvider');
+      return res.json({
+        success: true,
+        message: 'Review and rating submitted successfully. Specialist overall rating updated!',
+        data: refreshedRequest,
+        provider: updatedProvider,
+      });
+    }
+
+    // In-memory fallback
+    const reqObj = inMemoryRequests.find((r) => String(r._id) === String(id));
+    if (!reqObj) {
+      return res.status(404).json({ success: false, message: 'Service request not found' });
+    }
+
+    reqObj.review = {
+      rating: numericRating,
+      comment: comment || 'Service completed successfully.',
+      createdAt: new Date(),
+    };
+
+    if (reqObj.assignedProvider) {
+      const prevRating = reqObj.assignedProvider.rating || 4.5;
+      const prevCount = reqObj.assignedProvider.reviewsCount || 10;
+      const newOverall = ((prevRating * prevCount) + numericRating) / (prevCount + 1);
+      reqObj.assignedProvider.rating = Math.round(newOverall * 10) / 10;
+      reqObj.assignedProvider.reviewsCount = prevCount + 1;
+    }
+
+    return res.json({
+      success: true,
+      message: 'Review and rating submitted successfully (in-memory mode)',
+      data: reqObj,
+      provider: reqObj.assignedProvider,
+    });
+  } catch (error) {
+    console.error('Error submitting review:', error);
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
