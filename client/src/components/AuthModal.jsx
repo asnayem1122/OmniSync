@@ -171,7 +171,7 @@ export default function AuthModal({
         </div>
 
         {/* ---------------------------------------------------------------- */}
-        {/* 1-Click Demo Profiles (For Instant Hackathon & Evaluation Test) */}
+        {/* 1-Click Sandbox Profiles (For Instant Verification & Testing) */}
         {/* ---------------------------------------------------------------- */}
         <div className="mb-6 bg-slate-50 dark:bg-slate-800/40 p-4 rounded-2xl border border-slate-200/80 dark:border-white/5">
           <div className="flex items-center justify-between mb-2.5">

@@ -1,6 +1,6 @@
 # ⚡ OmniSync • Autonomous Smart Home & Contractor Dispatch Platform
 
-> **BAUST CSE FEST 2026 Hackathon** — An enterprise-grade, full-stack MERN platform connecting homeowners and commercial facility managers with pre-vetted specialists through multi-factor algorithmic matching, collision-free scheduling, live GIS road telemetry, hardware problem image diagnosis, and post-service rating recalculation.
+> **OmniSync Enterprise Platform** — A high-throughput, full-stack MERN ecosystem connecting homeowners and facility managers with certified technical specialists using multi-factor algorithmic matching, collision-free scheduling, live GIS road telemetry, hardware defect image diagnostics, and automated rating recalculation.
 
 [![Platform Tests](https://img.shields.io/badge/Platform%20Tests-52%2F52%20PASS-10B981?style=for-the-badge&logo=checkmarx)](file:///d:/Code/Smart_Home_Automation/report.md)
 [![Vite Build](https://img.shields.io/badge/Vite%20Build-Clean%20(0%20Errors)-06B6D4?style=for-the-badge&logo=vite)](file:///d:/Code/Smart_Home_Automation/vite.config.js)
@@ -25,7 +25,7 @@
 9. [Automated Verification & Test Suites (52/52 Passed)](#-automated-verification--test-suites)
 10. [Local Development Quick Start](#-local-development-quick-start)
 11. [Vercel Deployment Guide](#-vercel-deployment-guide)
-12. [Hackathon Demo Script (3-Minute Walkthrough)](#-hackathon-demo-script-3-minute-walkthrough)
+12. [Platform Walkthrough & Core User Flows](#-platform-walkthrough--core-user-flows)
 
 ---
 
@@ -261,7 +261,7 @@ sequenceDiagram
 | **7** | **Technician Control Workspace** | Dedicated portal with incoming job queues, interactive calendar timeline, manual busy slot creation, and real-time availability toggle. | Full operational ERP for independent contractors and field technicians. |
 | **8** | **Post-Service 5-Star Rating Modal** | Modal dialog capturing star rating, satisfaction tags, and written feedback with atomic server-side recalculation of the specialist's aggregate score. | Continuous quality control and verified social proof. |
 | **9** | **Testimonials-13 Marquee** | Infinite-scroll horizontal marquee displaying verified client reviews, star ratings, and contractor brand insignias. | Establishes immediate trust and credibility on the landing page. |
-| **10** | **Role-Based Authentication** | Modal authentication for Customer and Specialist personas with pre-filled demo accounts for instant zero-hassle hackathon evaluations. | Secure session handling with immediate role-specific views. |
+| **10** | **Role-Based Authentication** | Modal authentication for Customer and Specialist personas with pre-configured sandbox accounts for rapid onboarding and security audit evaluation. | Secure session handling with immediate role-specific views. |
 | **11** | **Bangladeshi Taka (BDT ৳) Standard** | All hourly fees, diagnostic visit rates, and accrued earnings standardized to BDT (**`৳`**, Unicode `U+09F3`). | Complete regional relevance for local deployment. |
 | **12** | **Resilient Zero-Config Deployment** | Automatic fallback to MongoDB Memory Server when external database connection strings are absent. | Works out-of-the-box in local environments and Vercel Serverless. |
 
@@ -338,7 +338,7 @@ sequenceDiagram
 ---
 
 ### 7. Contractor Control Workspace & Visual Calendar ERP
-- **Persona Switcher**: Allows evaluators and contractors to switch between profiles (e.g., Electrical Master *Farhan Kabir* or HVAC Specialist *Mahmud Hasan*) to test role-specific workflows.
+- **Persona Switcher**: Allows operations managers and contractors to switch between profiles (e.g., Electrical Master *Farhan Kabir* or HVAC Specialist *Mahmud Hasan*) to review role-specific workflows.
 - **Incoming Jobs Queue**: Displays unassigned or dispatched tickets within the contractor's specific vertical with glowing one-click **Accept** and **Decline** controls.
 - **Visual Calendar Timeline**: A timeline component in [`src/components/ProviderScheduleView.jsx`](file:///d:/Code/Smart_Home_Automation/src/components/ProviderScheduleView.jsx) rendering blocked appointment windows in amber alongside free availability slots.
 - **Manual Busy Block Creation**: Contractors can block out personal or workshop hours directly on their calendar, preventing algorithmic assignment during maintenance periods.
@@ -366,9 +366,9 @@ sequenceDiagram
 
 ### 10. Role-Based Authentication System
 - **Authentication Modal**: Implemented in [`src/components/AuthModal.jsx`](file:///d:/Code/Smart_Home_Automation/src/components/AuthModal.jsx) with dedicated tabs for **Customer Sign In** and **Specialist Portal Access**.
-- **Hackathon Quick-Fill Buttons**: Includes instant 1-click credential auto-fill for demo accounts:
-  - *Demo Customer* (`tanjim@omnisync.io`)
-  - *Demo Specialist* (`farhan.kabir@apexrepairs.com`)
+- **Quick-Fill Credentials**: Includes instant 1-click credential auto-fill for sandbox accounts:
+  - *Customer Account* (`tanjim@omnisync.io`)
+  - *Specialist Account* (`farhan.kabir@apexrepairs.com`)
 - **Session State**: Manages simulated JWT session tokens and user avatar initials in React context, instantly tailoring navigation actions to the authenticated persona.
 
 ---
@@ -593,21 +593,21 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ---
 
-## 🎤 Hackathon Demo Script (3-Minute Walkthrough)
+## 🖥️ Platform Walkthrough & Core User Flows
 
-1. **Minute 1: Problem Image Attachment & Smart Algorithmic Match**
-   - Navigate to `http://localhost:3000` and view the **Testimonials-13** verified contractor marquee.
-   - Click **"Book Home Service"**, pick **Appliance & Gadget Repair**, and select **Gulshan, Dhaka**.
-   - Attach a hardware problem photo (instant preview rendered) and set **Emergency Urgency**.
-   - Click **"Calculate Best Matches & Rankings"** $\rightarrow$ show judges the circular score ring and breakdown.
-2. **Minute 2: Conflict Shield & Live GIS Road Telemetry**
-   - Click **"Book & Dispatch Specialist"** $\rightarrow$ request transitions to `Accepted` and the slot locks.
-   - Switch to **Specialist Mode** in navbar $\rightarrow$ advance stage to **"Dispatch: Mark On The Way"**.
-   - Return to Customer View: show the **Interactive GIS Road Map** with animated vehicle movement, GPS coordinates, and live ETA countdown.
-3. **Minute 3: Completion & Instant Rating Recalculation**
-   - In Specialist Mode, click **"Finished: Complete & Test Systems"**.
-   - Customer Tracker receives completion status and displays the **5-Star Rating & Review Modal**.
-   - Submit a 5-star rating with **"On-Time Arrival"** tag $\rightarrow$ observe instant database recalculation of the provider's overall score from 4.7 to 4.8!
+1. **Hardware Defect Diagnosis & Algorithmic Dispatch**
+   - Navigate to the portal and explore verified contractor ratings and service specialties.
+   - Click **"Book Home Service"**, select a service category (e.g., *Appliance & Gadget Repair*), and pick the target service area (e.g., *Gulshan, Dhaka*).
+   - Attach a hardware defect photograph (instant client-side preview generated) and define request urgency.
+   - Execute algorithmic match calculation to review ranked specialists, distance metrics, and circular qualification scores.
+2. **Collision Shield & Live GIS Road Telemetry**
+   - Confirm booking with chosen specialist; the time window automatically locks on the specialist's calendar.
+   - Specialist transitions ticket to **"On the Way"** from the operations portal.
+   - Customer interface displays **Interactive GIS Road Map** tracking animated vehicle transit, GPS coordinates, and real-time decremental ETA.
+3. **Service Fulfillment & Instant Rating Recalculation**
+   - Specialist completes diagnostics, applies hardware repairs, and marks order **"Completed"**.
+   - Homeowner receives immediate completion prompt and submits a verified 5-star review with performance tags.
+   - The specialist's aggregate platform rating recalculates automatically and updates across the network.
 
 ---
 
@@ -617,4 +617,4 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 - **Nayem** ([@asnayem1122](https://github.com/asnayem1122)) — *System Architecture & Full-Stack Implementation*
 
 ---
-*Built with passion for BAUST CSE FEST 2026 Hackathon.*
+*OmniSync Smart Dispatch Systems • Enterprise Smart Home Infrastructure.*

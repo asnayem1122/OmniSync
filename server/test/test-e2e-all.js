@@ -110,8 +110,8 @@ async function runAllTests() {
       city: 'Downtown Austin',
     },
     preferredTimeRange: {
-      start: new Date(y, m, d, 14, 0).toISOString(),
-      end: new Date(y, m, d, 16, 0).toISOString(),
+      start: new Date(y, m, d + 2, 14, 0).toISOString(),
+      end: new Date(y, m, d + 2, 16, 0).toISOString(),
     },
     urgency: 'Emergency',
     details: 'Sparks from electrical sub-panel',

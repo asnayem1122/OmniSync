@@ -641,7 +641,7 @@ export default function LiveServiceMap({
         </div>
       </div>
 
-      {/* Manual Route Progress Scrubber for Demo / Hackathon evaluation */}
+      {/* Route Transit Simulation & Testing Scrubber */}
       <div className="p-4 bg-slate-50 dark:bg-slate-900/40 border-t border-slate-200/80 dark:border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
         <div className="flex items-center gap-2 w-full sm:w-auto">
           <Sliders className="w-4 h-4 text-emerald-600 shrink-0" />

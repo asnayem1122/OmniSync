@@ -38,7 +38,7 @@ All currency displays across the platform utilize the Bangladeshi Taka symbol (*
 
 ---
 
-## 3. Hackathon Core Functional Requirements Matrix
+## 3. Core Functional Requirements Matrix
 
 | # | Requirement | Implementation Details | Verification Status |
 | :-: | :--- | :--- | :-: |

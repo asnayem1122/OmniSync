@@ -372,7 +372,7 @@ export default function LiveTrackingTracker({
 
         {/* Status Timeline History & Simulator */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Hackathon Simulation Bar */}
+          {/* Interactive Operational Simulator */}
           <div className="spatial-panel rounded-3xl p-6 border border-emerald-500/30 bg-emerald-500/[0.08] dark:bg-emerald-950/20 backdrop-blur-xl shadow-spatial-md">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
