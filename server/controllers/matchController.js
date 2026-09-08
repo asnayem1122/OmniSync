@@ -217,6 +217,7 @@ export const matchProviders = async (req, res) => {
         matchedCount: scoredProviders.length,
       },
       results: scoredProviders,
+      data: scoredProviders,
     });
   } catch (error) {
     console.error('Error in matchProviders controller:', error);

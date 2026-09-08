@@ -88,7 +88,6 @@ export const bookSlotForProvider = async (req, res) => {
     const { start, end, title, customerName } = req.body;
 
     const newSlot = {
-      _id: `slot_${Date.now()}`,
       start: new Date(start),
       end: new Date(end),
       title: title || 'Service Appointment',

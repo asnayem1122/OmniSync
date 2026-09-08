@@ -10,6 +10,7 @@
     "start": "node server/index.js",
     "seed": "node server/seed/seeder.js",
     "test:matching": "node server/test/test-matching.js",
+    "test:e2e": "node server/test/test-e2e-all.js",
     "preview": "vite preview"
   },
   "dependencies": {

@@ -291,7 +291,7 @@ export default function LiveTrackingTracker({
                 <div className="flex justify-between">
                   <span className="text-slate-500 dark:text-slate-400">Rate:</span>
                   <span className="font-bold text-teal-700 dark:text-teal-300">
-                    ${request.assignedProvider.basePrice}/hr
+                    ৳{request.assignedProvider.basePrice}/hr
                   </span>
                 </div>
                 <div className="flex justify-between">

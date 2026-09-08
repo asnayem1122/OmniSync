@@ -11,7 +11,7 @@ import {
   Award,
   Zap,
   ChevronDown,
-  DollarSign,
+  Banknote,
   CheckCircle2,
   Clock,
   Power,
@@ -143,7 +143,7 @@ export default function ProviderDashboard({
                   </div>
                   <span>•</span>
                   <span className="text-slate-900 dark:text-white font-bold">
-                    ${currentProvider.basePrice}/hr Base
+                    ৳{currentProvider.basePrice}/hr Base
                   </span>
                   <span>•</span>
                   <span>{currentProvider.location?.city || 'Austin Metro'}</span>
@@ -225,9 +225,9 @@ export default function ProviderDashboard({
               Revenue Accrued
             </span>
             <div className="flex items-center gap-1.5">
-              <DollarSign className="w-4 h-4 text-emerald-600" />
+              <Banknote className="w-4 h-4 text-emerald-600" />
               <span className="text-xl font-extrabold text-slate-900 dark:text-white">
-                ${earnings.toLocaleString()}
+                ৳{earnings.toLocaleString()} BDT
               </span>
             </div>
             <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-semibold block mt-0.5">

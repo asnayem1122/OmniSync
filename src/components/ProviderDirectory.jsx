@@ -111,7 +111,7 @@ export default function ProviderDirectory({ providers = [] }) {
                   {provider.expertiseLevel}
                 </span>
                 <span className="text-[10px] font-extrabold px-2.5 py-0.5 rounded-lg bg-teal-500/15 text-teal-800 dark:text-teal-300 border border-teal-500/20 shadow-xs">
-                  ${provider.basePrice}/hr
+                  ৳{provider.basePrice}/hr
                 </span>
               </div>
             </div>

@@ -388,7 +388,7 @@ const TestimonialList = ({
               variant="ghost"
               className="h-7 px-2 text-[10px] font-extrabold rounded-lg bg-slate-100 dark:bg-white/10 text-slate-700 dark:text-slate-300"
             >
-              <span>${testimonial.basePrice}/hr</span>
+              <span>৳{testimonial.basePrice}/hr</span>
             </Button>
           </div>
 
@@ -531,7 +531,7 @@ function SingleServiceHolderCard({
             </div>
           </div>
           <span className="text-xs font-extrabold px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-white/10 text-slate-700 dark:text-slate-300">
-            ${item.basePrice}/hr
+            ৳{item.basePrice}/hr
           </span>
         </div>
 
