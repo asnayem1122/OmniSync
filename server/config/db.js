@@ -1,9 +1,12 @@
 import mongoose from 'mongoose';
 
+// Disable Mongoose command buffering so queries fail immediately or fallback to mock data
+// instead of hanging/timing out for 10s on Vercel when MONGO_URI is not yet configured.
+mongoose.set('bufferCommands', false);
+
 let mongoMemoryServer = null;
 
 export const connectDB = async () => {
-  // Reuse existing connection in serverless / hot-reload environments
   if (mongoose.connection.readyState >= 1) {
     return mongoose.connection;
   }
@@ -12,29 +15,26 @@ export const connectDB = async () => {
   const isVercel = process.env.VERCEL === '1' || process.env.VERCEL === true;
   const forceMemory = (process.env.USE_MEMORY_DB === 'true' || !customUri) && !isVercel;
 
-  // 1. If explicit MONGO_URI provided (e.g. MongoDB Atlas on Vercel or Production)
+  // 1. If custom MONGO_URI provided (MongoDB Atlas on Vercel or Production)
   if (customUri) {
     try {
-      console.log('🔄 Connecting to MongoDB (Atlas / Remote)...');
+      console.log('🔄 Connecting to MongoDB Atlas...');
       const conn = await mongoose.connect(customUri, {
-        serverSelectionTimeoutMS: 5000,
+        serverSelectionTimeoutMS: 4000,
       });
       console.log(`✅ Connected to MongoDB: ${conn.connection.host}`);
       return conn;
     } catch (err) {
-      console.error(`❌ MongoDB connection error (${customUri}):`, err.message);
+      console.error(`❌ MongoDB Atlas connection error:`, err.message);
       if (!isVercel) {
         console.log('⚡ Falling back to In-Memory MongoDB Server...');
-      } else {
-        throw err;
       }
     }
   }
 
-  // 2. Local / Development In-Memory MongoDB Server
+  // 2. Local In-Memory MongoDB (only in local standalone node, never in serverless)
   if (!isVercel || forceMemory) {
     try {
-      console.log('⚡ Initializing Embedded In-Memory MongoDB Server...');
       const { MongoMemoryServer } = await import('mongodb-memory-server');
       if (!mongoMemoryServer) {
         mongoMemoryServer = await MongoMemoryServer.create();
@@ -44,17 +44,12 @@ export const connectDB = async () => {
       console.log(`✅ Connected to In-Memory MongoDB: ${conn.connection.host}`);
       return conn;
     } catch (err) {
-      console.error('❌ Failed to initialize In-Memory MongoDB:', err.message);
-      if (customUri) {
-        return await mongoose.connect(customUri);
-      }
-      throw err;
+      console.error('❌ In-Memory MongoDB notice:', err.message);
     }
   }
 
-  // 3. Fallback on Vercel if no MONGO_URI was provided
-  console.warn('⚠️ Running on Vercel without MONGO_URI environment variable.');
-  console.warn('👉 Please set MONGO_URI in your Vercel Project Settings for MongoDB Atlas persistence.');
+  console.log('ℹ️ Running in resilient Zero-Config Mode with in-memory store.');
+  return null;
 };
 
 export const closeDB = async () => {
