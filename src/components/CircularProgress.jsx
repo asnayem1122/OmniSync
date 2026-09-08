@@ -40,7 +40,8 @@ export default function CircularProgress({ score = 0, size = 80, strokeWidth = 7
           cx={size / 2}
           cy={size / 2}
           r={radius}
-          stroke="rgba(255, 255, 255, 0.08)"
+          className="text-slate-900/[0.08] dark:text-white/[0.08]"
+          stroke="currentColor"
           strokeWidth={strokeWidth}
           fill="none"
         />
@@ -58,20 +59,21 @@ export default function CircularProgress({ score = 0, size = 80, strokeWidth = 7
           strokeDashoffset={strokeDashoffset}
           className="transition-all duration-1000 ease-out"
           style={{
-            filter: clampedScore >= 80 ? 'drop-shadow(0 0 6px rgba(16, 185, 129, 0.5))' : 'none',
+            filter: clampedScore >= 80 ? 'drop-shadow(0 0 6px rgba(16, 185, 129, 0.45))' : 'none',
           }}
         />
       </svg>
 
       {/* Centered Label */}
       <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-        <span className="text-lg font-extrabold tracking-tight text-white leading-none">
+        <span className="text-lg font-extrabold tracking-tight text-slate-900 dark:text-white leading-none">
           {clampedScore}
         </span>
-        <span className="text-[9px] font-semibold uppercase tracking-wider text-emerald-300/80">
+        <span className="text-[9px] font-extrabold uppercase tracking-wider text-emerald-700 dark:text-emerald-300">
           Match
         </span>
       </div>
     </div>
   );
 }
+

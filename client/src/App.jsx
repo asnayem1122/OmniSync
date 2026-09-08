@@ -1,15 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import MeshBackground from './components/MeshBackground';
 import Navbar from './components/Navbar';
+import HomeHero from './components/HomeHero';
+import CompleteServicesGrid from './components/CompleteServicesGrid';
+import TrustAndShowcase from './components/TrustAndShowcase';
 import ServiceRequestForm from './components/ServiceRequestForm';
 import RecommendationView from './components/RecommendationView';
 import LiveTrackingTracker from './components/LiveTrackingTracker';
 import ProviderDirectory from './components/ProviderDirectory';
 import ProviderDashboard from './components/ProviderDashboard';
+import Footer from './components/Footer';
 
 const API_BASE = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
 
 export default function App() {
+  const [theme, setTheme] = useState(() => {
+    return localStorage.getItem('omnisync-theme') || 'light';
+  });
   const [activeTab, setActiveTab] = useState('request'); // 'request' | 'recommendations' | 'tracking' | 'providers' | 'provider-dashboard'
   const [providers, setProviders] = useState([]);
   const [requests, setRequests] = useState([]);
@@ -18,10 +25,24 @@ export default function App() {
   const [pendingFormPayload, setPendingFormPayload] = useState(null);
   const [activeRequest, setActiveRequest] = useState(null);
 
+  // External form pre-sets from hero or services grid clicks
+  const [formCategory, setFormCategory] = useState('Smart Lighting & Control');
+  const [formUrgency, setFormUrgency] = useState('High');
+
   const [isLoading, setIsLoading] = useState(false);
   const [isBooking, setIsBooking] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [errorBanner, setErrorBanner] = useState(null);
+
+  // Sync theme with html class & localStorage
+  useEffect(() => {
+    localStorage.setItem('omnisync-theme', theme);
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [theme]);
 
   // 1. Fetch initial providers and requests
   const fetchProviders = async () => {
@@ -42,7 +63,6 @@ export default function App() {
       const data = await res.json();
       if (data.success) {
         setRequests(data.data);
-        // If activeRequest is set, update it to freshest from backend
         if (activeRequest) {
           const fresh = data.data.find((r) => r._id === activeRequest._id);
           if (fresh) setActiveRequest(fresh);
@@ -56,13 +76,28 @@ export default function App() {
   useEffect(() => {
     fetchProviders();
     fetchRequests();
-    // Poll updates every 8 seconds for live sync
     const interval = setInterval(() => {
       fetchRequests();
       fetchProviders();
     }, 8000);
     return () => clearInterval(interval);
   }, []);
+
+  const scrollToBooking = () => {
+    setActiveTab('request');
+    setTimeout(() => {
+      const el = document.getElementById('booking-section');
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 50);
+  };
+
+  const handleSelectServiceAndScroll = (category, urgency = 'High') => {
+    setFormCategory(category);
+    setFormUrgency(urgency);
+    scrollToBooking();
+  };
 
   // 2. Submit Request to Matching Engine (Customer)
   const handleFindMatches = async (formPayload) => {
@@ -85,6 +120,7 @@ export default function App() {
       setMatches(data.results || []);
       setRequestSummary(data.requestSummary || null);
       setActiveTab('recommendations');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err) {
       console.error('Matching error:', err);
       setErrorBanner(err.message);
@@ -128,6 +164,7 @@ export default function App() {
 
       setActiveRequest(data.data);
       setActiveTab('tracking');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       fetchProviders();
       fetchRequests();
     } catch (err) {
@@ -224,27 +261,33 @@ export default function App() {
   const pendingRequestsCount = requests.filter((r) => r.status === 'Requested').length;
 
   return (
-    <div className="relative min-h-screen text-slate-100 flex flex-col justify-between pb-16">
-      {/* Vibrant Mesh Gradient Background */}
-      <MeshBackground />
+    <div
+      className={`relative min-h-screen ${
+        theme === 'dark' ? 'dark text-slate-100' : 'text-slate-800'
+      } flex flex-col justify-between transition-colors duration-300 font-sans antialiased selection:bg-[#1E3A2B] selection:text-white bg-[#F8FAFC] dark:bg-[#070C18]`}
+    >
+      {/* Background Ambience */}
+      <MeshBackground theme={theme} />
 
       <div>
-        {/* Horizon UI Navigation */}
+        {/* Floating Capsule Pill Navigation */}
         <Navbar
           activeTab={activeTab}
           setActiveTab={setActiveTab}
           activeRequest={activeRequest}
           pendingJobsCount={pendingRequestsCount}
+          theme={theme}
+          setTheme={setTheme}
         />
 
         {/* Global Error Banner */}
         {errorBanner && (
           <div className="max-w-4xl mx-auto px-4 mb-6">
-            <div className="p-4 rounded-2xl bg-rose-500/20 border border-rose-500/40 text-rose-200 text-xs flex items-center justify-between">
-              <span>{errorBanner}</span>
+            <div className="p-4 rounded-2xl bg-rose-500/15 border border-rose-500/30 text-rose-800 dark:text-rose-200 text-xs flex items-center justify-between shadow-sm backdrop-blur-md">
+              <span className="font-medium">{errorBanner}</span>
               <button
                 onClick={() => setErrorBanner(null)}
-                className="font-bold underline ml-4 hover:text-white"
+                className="font-bold underline ml-4 hover:opacity-80"
               >
                 Dismiss
               </button>
@@ -255,10 +298,29 @@ export default function App() {
         {/* Main View Area */}
         <main className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
           {activeTab === 'request' && (
-            <ServiceRequestForm
-              onFindMatches={handleFindMatches}
-              isLoading={isLoading}
-            />
+            <div className="space-y-4 sm:space-y-6">
+              {/* Signature Hero Section */}
+              <HomeHero
+                onSelectServiceAndScroll={handleSelectServiceAndScroll}
+                onScheduleClick={scrollToBooking}
+              />
+
+              {/* 6-Card Service Grid */}
+              <CompleteServicesGrid
+                onSelectService={(catId) => handleSelectServiceAndScroll(catId)}
+              />
+
+              {/* Service Request & Scheduling Form */}
+              <ServiceRequestForm
+                onFindMatches={handleFindMatches}
+                isLoading={isLoading}
+                initialCategory={formCategory}
+                initialUrgency={formUrgency}
+              />
+
+              {/* Trust, Before/After & Customer Reviews */}
+              <TrustAndShowcase onScheduleClick={scrollToBooking} />
+            </div>
           )}
 
           {activeTab === 'recommendations' && (
@@ -276,7 +338,10 @@ export default function App() {
               request={activeRequest}
               onUpdateStatus={handleUpdateStatus}
               isUpdating={isUpdating}
-              onNewRequest={() => setActiveTab('request')}
+              onNewRequest={() => {
+                setActiveTab('request');
+                scrollToBooking();
+              }}
             />
           )}
 
@@ -298,12 +363,14 @@ export default function App() {
         </main>
       </div>
 
-      {/* Footer */}
-      <footer className="mt-16 text-center text-xs text-slate-500">
-        <p>
-          OmniSync Smart Home Automation • Built with MERN, Tailwind CSS & Horizon UI Glassmorphism
-        </p>
-      </footer>
+      {/* Contractor Polish Footer */}
+      <Footer
+        onNavigateTab={(tab) => {
+          setActiveTab(tab);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
+        onScheduleClick={scrollToBooking}
+      />
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Zap,
   Thermometer,
@@ -13,50 +13,45 @@ import {
   ArrowRight,
   User,
   Phone,
+  ShieldCheck,
 } from 'lucide-react';
 
 const CATEGORIES = [
   {
     id: 'Smart Lighting & Control',
-    title: 'Smart Lighting',
-    desc: 'Lutron, Caseta, smart switches & scene automation',
+    title: 'Smart Lighting & Shading',
+    desc: 'Lutron Caseta, architectural scene keypads & circadian rhythms',
     icon: Zap,
-    color: 'from-amber-400/20 to-emerald-400/20 text-amber-300 border-amber-500/30',
   },
   {
     id: 'HVAC & Climate Automation',
-    title: 'HVAC & Climate',
-    desc: 'Ecobee, Nest, heat pump & multi-zone dampers',
+    title: 'HVAC & Climate Automation',
+    desc: 'Ecobee, Nest, heat pump load balancing & damper diagnostics',
     icon: Thermometer,
-    color: 'from-teal-400/20 to-cyan-400/20 text-teal-300 border-teal-500/30',
   },
   {
     id: 'Smart Security & Access',
-    title: 'Security & Access',
-    desc: '4K PoE cameras, UniFi, smart biometric locks',
+    title: 'Security & Access Control',
+    desc: '4K PoE AI cameras, biometric locks & perimeter sensors',
     icon: Shield,
-    color: 'from-emerald-400/20 to-teal-400/20 text-emerald-300 border-emerald-500/30',
   },
   {
     id: 'Home Audio & Theater',
-    title: 'Audio & Cinema',
-    desc: 'Dolby Atmos, Sonos matrix & in-wall acoustic setup',
+    title: 'Whole-Home Audio & Cinema',
+    desc: 'Dolby Atmos, multi-zone Sonos matrix & architectural speakers',
     icon: Speaker,
-    color: 'from-purple-400/20 to-pink-400/20 text-purple-300 border-purple-500/30',
   },
   {
     id: 'Automated Blinds & Shading',
-    title: 'Motorized Shading',
-    desc: 'Somfy, Serena shades & solar automated tracking',
-    icon: SunMedium,
-    color: 'from-blue-400/20 to-teal-400/20 text-blue-300 border-blue-500/30',
+    title: 'Proactive Health & Diagnostics',
+    desc: 'Continuous sensor health, hub checks & seasonal preventive tune-ups',
+    icon: Cpu,
   },
   {
     id: 'Smart Appliance Integration',
-    title: 'Appliance & Energy',
-    desc: 'Emporia energy monitors, smart relays & EV grid',
-    icon: Cpu,
-    color: 'from-emerald-400/20 to-lime-400/20 text-lime-300 border-lime-500/30',
+    title: 'Enterprise Mesh & IoT Networks',
+    desc: 'Commercial Wi-Fi 7, Matter, Zigbee mesh & VLAN isolation',
+    icon: SunMedium,
   },
 ];
 
@@ -68,14 +63,21 @@ const LOCATION_PRESETS = [
 ];
 
 const URGENCIES = [
-  { level: 'Low', label: 'Low Urgency', sub: 'Flexible 48-72 hrs', border: 'border-slate-700' },
-  { level: 'Medium', label: 'Standard', sub: 'Within 24 hours', border: 'border-teal-500/40' },
-  { level: 'High', label: 'Priority', sub: 'Same-day urgent', border: 'border-amber-500/50' },
-  { level: 'Emergency', label: 'Emergency', sub: 'Immediate dispatch', border: 'border-rose-500/60' },
+  { level: 'Low', label: 'Low Urgency', sub: 'Flexible 48-72 hrs' },
+  { level: 'Medium', label: 'Standard', sub: 'Within 24 hours' },
+  { level: 'High', label: 'Priority', sub: 'Same-day urgent' },
+  { level: 'Emergency', label: 'Emergency', sub: 'Immediate dispatch' },
 ];
 
-export default function ServiceRequestForm({ onFindMatches, isLoading }) {
-  const [selectedCategory, setSelectedCategory] = useState(CATEGORIES[0].id);
+export default function ServiceRequestForm({
+  onFindMatches,
+  isLoading,
+  initialCategory,
+  initialUrgency,
+}) {
+  const [selectedCategory, setSelectedCategory] = useState(
+    initialCategory || CATEGORIES[0].id
+  );
   const [customerName, setCustomerName] = useState('Alex Rivera');
   const [customerPhone, setCustomerPhone] = useState('+1 (512) 555-4829');
   const [customerEmail, setCustomerEmail] = useState('alex.rivera@homemail.com');
@@ -83,16 +85,30 @@ export default function ServiceRequestForm({ onFindMatches, isLoading }) {
   const [selectedPreset, setSelectedPreset] = useState(LOCATION_PRESETS[0]);
   const [customAddress, setCustomAddress] = useState(LOCATION_PRESETS[0].address);
 
-  const [urgency, setUrgency] = useState('High');
+  const [urgency, setUrgency] = useState(initialUrgency || 'High');
   const [filterCollisions, setFilterCollisions] = useState(true);
   const [details, setDetails] = useState(
-    'Smart scene keypad intermittently failing to trigger secondary relay zone.'
+    'Keypad relay intermittently failing to trigger secondary smart lighting scene.'
   );
 
   // Time Slot Selection
   const [timePreset, setTimePreset] = useState('immediate');
   const [customStart, setCustomStart] = useState('');
   const [customEnd, setCustomEnd] = useState('');
+
+  // Sync with external initial props if passed
+  useEffect(() => {
+    if (initialCategory) {
+      const match = CATEGORIES.find((c) => c.id === initialCategory);
+      if (match) setSelectedCategory(match.id);
+    }
+  }, [initialCategory]);
+
+  useEffect(() => {
+    if (initialUrgency) {
+      setUrgency(initialUrgency);
+    }
+  }, [initialUrgency]);
 
   const getTimeRange = () => {
     const now = new Date();
@@ -145,36 +161,37 @@ export default function ServiceRequestForm({ onFindMatches, isLoading }) {
   };
 
   return (
-    <div className="max-w-5xl mx-auto">
-      <div className="glass-panel rounded-3xl p-6 sm:p-10 border border-white/10 bg-slate-900/50 backdrop-blur-2xl shadow-2xl relative overflow-hidden">
-        {/* Glow Accent */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl -z-10" />
+    <div id="booking-section" className="py-10 max-w-5xl mx-auto">
+      <div className="bg-white dark:bg-slate-900/90 border border-slate-200/90 dark:border-white/10 rounded-3xl p-6 sm:p-10 lg:p-12 shadow-clean-card relative overflow-hidden">
+        {/* Subtle accent background glow */}
+        <div className="absolute top-0 right-0 w-80 h-80 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none -z-0" />
 
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-8 mb-8 border-b border-white/10">
+        {/* Section Title Header */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-8 mb-8 border-b border-slate-200 dark:border-white/10">
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold uppercase tracking-wider mb-2">
-              <Sparkles className="w-3.5 h-3.5" />
-              Automated Dispatch
+            <div className="contractor-tag mb-2">
+              <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
+              <span>Collision Shield Dispatch</span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-              Schedule Smart Home Technician
-            </h1>
-            <p className="text-slate-400 text-sm mt-1">
-              Multi-factor algorithmic matching with guaranteed zero double-booking collision.
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+              Schedule Certified Specialist
+            </h2>
+            <p className="text-slate-600 dark:text-slate-300 text-sm mt-1 font-medium">
+              Multi-factor algorithmic matching: rating, Haversine proximity, price, and guaranteed zero double-booking.
             </p>
           </div>
 
-          <div className="flex items-center gap-2 bg-slate-950/60 p-2.5 rounded-2xl border border-white/10 text-xs text-slate-300">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping" />
-            <span className="font-semibold text-white">13 Verified Technicians Online</span>
+          <div className="flex items-center gap-2.5 bg-slate-50 dark:bg-slate-800/80 px-4 py-2.5 rounded-full border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-800 dark:text-white">
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+            <span>13 Technicians Available</span>
           </div>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-8">
           {/* 1. Service Category Selection */}
           <div>
-            <label className="block text-sm font-bold uppercase tracking-wider text-slate-300 mb-3">
-              1. Select Service Discipline
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-3">
+              1. Select Service Category
             </label>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
               {CATEGORIES.map((cat) => {
@@ -184,25 +201,35 @@ export default function ServiceRequestForm({ onFindMatches, isLoading }) {
                   <div
                     key={cat.id}
                     onClick={() => setSelectedCategory(cat.id)}
-                    className={`cursor-pointer rounded-2xl p-4 transition-all duration-200 border flex flex-col justify-between ${
+                    className={`cursor-pointer rounded-2xl p-4.5 transition-all duration-200 border flex flex-col justify-between ${
                       isSelected
-                        ? 'bg-emerald-500/15 border-emerald-500 shadow-lg shadow-emerald-500/20 scale-[1.02]'
-                        : 'bg-white/[0.03] border-white/10 hover:border-white/20 hover:bg-white/[0.05]'
+                        ? 'bg-[#EBF5F0] dark:bg-emerald-950/40 border-[#1E3A2B] dark:border-emerald-500 ring-2 ring-[#1E3A2B]/20 shadow-sm'
+                        : 'bg-white dark:bg-slate-800/40 border-slate-200 dark:border-white/10 hover:border-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
                     }`}
                   >
-                    <div className="flex items-start justify-between mb-2">
-                      <div className={`p-2.5 rounded-xl bg-white/[0.06] border border-white/10 ${cat.color}`}>
+                    <div className="flex items-start justify-between mb-3">
+                      <div
+                        className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                          isSelected
+                            ? 'bg-[#1E3A2B] text-white'
+                            : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
+                        }`}
+                      >
                         <Icon className="w-5 h-5" />
                       </div>
                       {isSelected && (
-                        <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500 text-slate-950">
+                        <span className="text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-[#1E3A2B] text-white">
                           Selected
                         </span>
                       )}
                     </div>
                     <div>
-                      <h3 className="font-bold text-white text-sm">{cat.title}</h3>
-                      <p className="text-xs text-slate-400 mt-1 leading-relaxed">{cat.desc}</p>
+                      <h3 className="font-bold text-slate-900 dark:text-white text-sm">
+                        {cat.title}
+                      </h3>
+                      <p className="text-xs text-slate-600 dark:text-slate-400 mt-1 leading-relaxed font-medium">
+                        {cat.desc}
+                      </p>
                     </div>
                   </div>
                 );
@@ -210,17 +237,19 @@ export default function ServiceRequestForm({ onFindMatches, isLoading }) {
             </div>
           </div>
 
-          {/* 2. Location & Coordinate Anchor */}
+          {/* 2. Customer Location & Coordinates */}
           <div>
             <div className="flex items-center justify-between mb-2">
-              <label className="text-sm font-bold uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
-                <MapPin className="w-4 h-4 text-emerald-400" />
-                2. Customer Location & Coordinates
+              <label className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                <MapPin className="w-4 h-4 text-[#1E3A2B] dark:text-emerald-400" />
+                2. Service Address & Location Anchor
               </label>
-              <span className="text-xs text-slate-400">Calculates exact Haversine proximity</span>
+              <span className="text-xs text-slate-500 font-medium">
+                Haversine Distance Telemetry
+              </span>
             </div>
 
-            {/* Quick Presets */}
+            {/* Location Presets */}
             <div className="flex flex-wrap gap-2 mb-3">
               {LOCATION_PRESETS.map((loc) => {
                 const isMatch = selectedPreset.name === loc.name;
@@ -232,10 +261,10 @@ export default function ServiceRequestForm({ onFindMatches, isLoading }) {
                       setSelectedPreset(loc);
                       setCustomAddress(loc.address);
                     }}
-                    className={`text-xs px-3 py-1.5 rounded-xl font-medium transition-all ${
+                    className={`text-xs px-3.5 py-1.5 rounded-full font-bold transition-all ${
                       isMatch
-                        ? 'bg-teal-500/25 text-teal-300 border border-teal-500/50'
-                        : 'bg-white/[0.04] text-slate-400 hover:text-white border border-white/5'
+                        ? 'bg-[#1E3A2B] text-white shadow-xs'
+                        : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 border border-slate-200 dark:border-slate-700'
                     }`}
                   >
                     {loc.name}
@@ -244,16 +273,16 @@ export default function ServiceRequestForm({ onFindMatches, isLoading }) {
               })}
             </div>
 
-            <div className="relative">
+            <div>
               <input
                 type="text"
                 value={customAddress}
                 onChange={(e) => setCustomAddress(e.target.value)}
                 placeholder="Enter customer service address"
                 required
-                className="w-full glass-input rounded-xl px-4 py-3 text-sm placeholder:text-slate-500"
+                className="w-full rounded-xl px-4 py-3 text-sm font-medium border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#1E3A2B] focus:border-[#1E3A2B]"
               />
-              <div className="mt-1.5 flex items-center gap-3 text-[11px] text-slate-400">
+              <div className="mt-2 flex items-center gap-3 text-[11px] text-slate-500 font-medium">
                 <span>Lat: {selectedPreset.lat}</span>
                 <span>•</span>
                 <span>Lng: {selectedPreset.lng}</span>
@@ -261,21 +290,22 @@ export default function ServiceRequestForm({ onFindMatches, isLoading }) {
             </div>
           </div>
 
-          {/* 3. Preferred Time & Window */}
+          {/* 3. Preferred Time & Urgency */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Preferred Time Window */}
             <div>
-              <label className="text-sm font-bold uppercase tracking-wider text-slate-300 flex items-center gap-1.5 mb-2">
-                <Clock className="w-4 h-4 text-teal-400" />
+              <label className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 flex items-center gap-1.5 mb-2">
+                <Clock className="w-4 h-4 text-[#1E3A2B] dark:text-emerald-400" />
                 3. Preferred Time Slot
               </label>
-              <div className="grid grid-cols-3 gap-2 mb-2">
+              <div className="grid grid-cols-3 gap-2 mb-3">
                 <button
                   type="button"
                   onClick={() => setTimePreset('immediate')}
-                  className={`p-2.5 rounded-xl text-center text-xs font-semibold transition-all ${
+                  className={`p-2.5 rounded-xl text-center text-xs font-bold transition-all ${
                     timePreset === 'immediate'
-                      ? 'bg-gradient-to-r from-emerald-500/20 to-teal-500/20 text-emerald-300 border border-emerald-500/50 shadow-md'
-                      : 'bg-white/[0.04] text-slate-400 border border-white/5'
+                      ? 'bg-[#1E3A2B] text-white shadow-sm'
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 border border-slate-200 dark:border-slate-700'
                   }`}
                 >
                   Immediate (1-2h)
@@ -283,10 +313,10 @@ export default function ServiceRequestForm({ onFindMatches, isLoading }) {
                 <button
                   type="button"
                   onClick={() => setTimePreset('afternoon')}
-                  className={`p-2.5 rounded-xl text-center text-xs font-semibold transition-all ${
+                  className={`p-2.5 rounded-xl text-center text-xs font-bold transition-all ${
                     timePreset === 'afternoon'
-                      ? 'bg-gradient-to-r from-emerald-500/20 to-teal-500/20 text-emerald-300 border border-emerald-500/50 shadow-md'
-                      : 'bg-white/[0.04] text-slate-400 border border-white/5'
+                      ? 'bg-[#1E3A2B] text-white shadow-sm'
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 border border-slate-200 dark:border-slate-700'
                   }`}
                 >
                   This Afternoon
@@ -294,27 +324,32 @@ export default function ServiceRequestForm({ onFindMatches, isLoading }) {
                 <button
                   type="button"
                   onClick={() => setTimePreset('tomorrow')}
-                  className={`p-2.5 rounded-xl text-center text-xs font-semibold transition-all ${
+                  className={`p-2.5 rounded-xl text-center text-xs font-bold transition-all ${
                     timePreset === 'tomorrow'
-                      ? 'bg-gradient-to-r from-emerald-500/20 to-teal-500/20 text-emerald-300 border border-emerald-500/50 shadow-md'
-                      : 'bg-white/[0.04] text-slate-400 border border-white/5'
+                      ? 'bg-[#1E3A2B] text-white shadow-sm'
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 border border-slate-200 dark:border-slate-700'
                   }`}
                 >
                   Tomorrow AM
                 </button>
               </div>
 
-              {/* Collision Filter Toggle */}
-              <div className="mt-3 flex items-center justify-between p-3 rounded-xl bg-slate-950/40 border border-white/5">
+              {/* Strict Collision Filter Toggle */}
+              <div className="flex items-center justify-between p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
                 <div className="text-xs">
-                  <span className="font-semibold text-white">Strict Collision Prevention</span>
-                  <p className="text-slate-400 text-[11px]">Filter out technicians with overlapping slots</p>
+                  <span className="font-bold text-slate-900 dark:text-white flex items-center gap-1">
+                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+                    Strict Collision Prevention
+                  </span>
+                  <p className="text-slate-500 text-[11px] font-medium">
+                    Filter out specialists with overlapping schedule slots
+                  </p>
                 </div>
                 <button
                   type="button"
                   onClick={() => setFilterCollisions(!filterCollisions)}
                   className={`w-11 h-6 flex items-center rounded-full p-1 transition-colors duration-200 ${
-                    filterCollisions ? 'bg-emerald-500' : 'bg-slate-700'
+                    filterCollisions ? 'bg-[#1E3A2B]' : 'bg-slate-300 dark:bg-slate-700'
                   }`}
                 >
                   <div
@@ -326,10 +361,10 @@ export default function ServiceRequestForm({ onFindMatches, isLoading }) {
               </div>
             </div>
 
-            {/* 4. Urgency Level */}
+            {/* Urgency Level */}
             <div>
-              <label className="text-sm font-bold uppercase tracking-wider text-slate-300 flex items-center gap-1.5 mb-2">
-                <AlertTriangle className="w-4 h-4 text-amber-400" />
+              <label className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 flex items-center gap-1.5 mb-2">
+                <AlertTriangle className="w-4 h-4 text-amber-500" />
                 4. Urgency Tier
               </label>
               <div className="grid grid-cols-2 gap-2">
@@ -341,15 +376,21 @@ export default function ServiceRequestForm({ onFindMatches, isLoading }) {
                       onClick={() => setUrgency(u.level)}
                       className={`cursor-pointer p-3 rounded-xl border transition-all ${
                         isSel
-                          ? 'bg-emerald-500/15 border-emerald-400 shadow-md'
-                          : `bg-white/[0.03] ${u.border} hover:bg-white/[0.06]`
+                          ? 'bg-[#EBF5F0] dark:bg-emerald-950/40 border-[#1E3A2B] dark:border-emerald-500 ring-2 ring-[#1E3A2B]/20 shadow-xs'
+                          : 'bg-white dark:bg-slate-800/40 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800'
                       }`}
                     >
                       <div className="flex items-center justify-between">
-                        <span className="font-bold text-xs text-white">{u.label}</span>
-                        {isSel && <div className="w-2 h-2 rounded-full bg-emerald-400 shadow-sm" />}
+                        <span className="font-bold text-xs text-slate-900 dark:text-white">
+                          {u.label}
+                        </span>
+                        {isSel && (
+                          <div className="w-2 h-2 rounded-full bg-[#1E3A2B] dark:bg-emerald-400" />
+                        )}
                       </div>
-                      <span className="text-[11px] text-slate-400 block mt-0.5">{u.sub}</span>
+                      <span className="text-[11px] text-slate-500 font-medium block mt-0.5">
+                        {u.sub}
+                      </span>
                     </div>
                   );
                 })}
@@ -357,10 +398,10 @@ export default function ServiceRequestForm({ onFindMatches, isLoading }) {
             </div>
           </div>
 
-          {/* 5. Customer Details & Service Scope */}
+          {/* 4. Customer Contact Details */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="text-xs font-semibold text-slate-400 block mb-1.5 flex items-center gap-1">
+              <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1.5 flex items-center gap-1">
                 <User className="w-3.5 h-3.5 text-slate-400" /> Customer Name
               </label>
               <input
@@ -368,11 +409,11 @@ export default function ServiceRequestForm({ onFindMatches, isLoading }) {
                 value={customerName}
                 onChange={(e) => setCustomerName(e.target.value)}
                 required
-                className="w-full glass-input rounded-xl px-3.5 py-2.5 text-sm"
+                className="w-full rounded-xl px-3.5 py-2.5 text-sm font-medium border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#1E3A2B] focus:border-[#1E3A2B]"
               />
             </div>
             <div>
-              <label className="text-xs font-semibold text-slate-400 block mb-1.5 flex items-center gap-1">
+              <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1.5 flex items-center gap-1">
                 <Phone className="w-3.5 h-3.5 text-slate-400" /> Phone Contact
               </label>
               <input
@@ -380,21 +421,21 @@ export default function ServiceRequestForm({ onFindMatches, isLoading }) {
                 value={customerPhone}
                 onChange={(e) => setCustomerPhone(e.target.value)}
                 required
-                className="w-full glass-input rounded-xl px-3.5 py-2.5 text-sm"
+                className="w-full rounded-xl px-3.5 py-2.5 text-sm font-medium border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#1E3A2B] focus:border-[#1E3A2B]"
               />
             </div>
           </div>
 
-          {/* Notes */}
+          {/* Service Notes */}
           <div>
-            <label className="text-xs font-semibold text-slate-400 block mb-1.5">
+            <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1.5">
               Service Notes & Problem Description
             </label>
             <textarea
               rows={2}
               value={details}
               onChange={(e) => setDetails(e.target.value)}
-              className="w-full glass-input rounded-xl px-3.5 py-2.5 text-sm"
+              className="w-full rounded-xl px-3.5 py-2.5 text-sm font-medium border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#1E3A2B] focus:border-[#1E3A2B]"
             />
           </div>
 
@@ -402,17 +443,17 @@ export default function ServiceRequestForm({ onFindMatches, isLoading }) {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-4 px-6 rounded-2xl font-extrabold text-base text-slate-950 bg-gradient-to-r from-emerald-400 via-teal-400 to-emerald-300 hover:from-emerald-300 hover:to-teal-300 transition-all duration-300 shadow-xl shadow-emerald-500/25 flex items-center justify-center gap-3 disabled:opacity-50 active:scale-[0.99]"
+            className="forest-pill-btn w-full py-4 px-6 text-base font-bold shadow-lg gap-2 cursor-pointer disabled:opacity-50"
           >
             {isLoading ? (
               <div className="flex items-center gap-2">
-                <div className="w-5 h-5 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
-                <span>Running Matching Algorithm...</span>
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                <span>Running Algorithmic Matching...</span>
               </div>
             ) : (
               <>
                 <span>Calculate Best Matches & Rankings</span>
-                <ArrowRight className="w-5 h-5 text-slate-950" />
+                <ArrowRight className="w-5 h-5" />
               </>
             )}
           </button>
