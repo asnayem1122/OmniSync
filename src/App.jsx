@@ -344,7 +344,7 @@ export default function App() {
 
   return (
     <div
-      className={`relative min-h-screen ${
+      className={`relative min-h-screen w-full max-w-full overflow-x-hidden ${
         theme === 'dark' ? 'dark text-slate-100' : 'text-slate-800'
       } flex flex-col justify-between transition-colors duration-300 font-sans antialiased selection:bg-[#1E3A2B] selection:text-white bg-[#F8FAFC] dark:bg-[#070C18]`}
     >
@@ -381,7 +381,7 @@ export default function App() {
         )}
 
         {/* Main View Area */}
-        <main className="px-3 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full pb-24 sm:pb-12">
+        <main className="px-3 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full pb-24 md:pb-12 overflow-x-hidden">
           {activeTab === 'request' && (
             <div className="space-y-4 sm:space-y-6">
               {/* Signature Hero Section */}
