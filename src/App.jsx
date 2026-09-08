@@ -7,6 +7,8 @@ import LiveTrackingTracker from './components/LiveTrackingTracker';
 import ProviderDirectory from './components/ProviderDirectory';
 import ProviderDashboard from './components/ProviderDashboard';
 
+const API_BASE = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
+
 export default function App() {
   const [activeTab, setActiveTab] = useState('request'); // 'request' | 'recommendations' | 'tracking' | 'providers' | 'provider-dashboard'
   const [providers, setProviders] = useState([]);
@@ -24,7 +26,7 @@ export default function App() {
   // 1. Fetch initial providers and requests
   const fetchProviders = async () => {
     try {
-      const res = await fetch('/api/providers');
+      const res = await fetch(`${API_BASE}/api/providers`);
       const data = await res.json();
       if (data.success) {
         setProviders(data.data);
@@ -36,7 +38,7 @@ export default function App() {
 
   const fetchRequests = async () => {
     try {
-      const res = await fetch('/api/requests');
+      const res = await fetch(`${API_BASE}/api/requests`);
       const data = await res.json();
       if (data.success) {
         setRequests(data.data);
@@ -69,7 +71,7 @@ export default function App() {
     setPendingFormPayload(formPayload);
 
     try {
-      const res = await fetch('/api/match', {
+      const res = await fetch(`${API_BASE}/api/match`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formPayload),
@@ -113,7 +115,7 @@ export default function App() {
         })),
       };
 
-      const res = await fetch('/api/requests', {
+      const res = await fetch(`${API_BASE}/api/requests`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(createPayload),
@@ -140,7 +142,7 @@ export default function App() {
   const handleUpdateStatus = async (requestId, nextStatus, customNote) => {
     setIsUpdating(true);
     try {
-      const res = await fetch(`/api/requests/${requestId}/status`, {
+      const res = await fetch(`${API_BASE}/api/requests/${requestId}/status`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -169,7 +171,7 @@ export default function App() {
   const handleProviderAcceptJob = async (job, provider) => {
     setIsUpdating(true);
     try {
-      const res = await fetch(`/api/requests/${job._id}/status`, {
+      const res = await fetch(`${API_BASE}/api/requests/${job._id}/status`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -199,7 +201,7 @@ export default function App() {
   const handleAddManualSlot = async (providerId, slotData) => {
     setIsUpdating(true);
     try {
-      const res = await fetch(`/api/providers/${providerId}/slots`, {
+      const res = await fetch(`${API_BASE}/api/providers/${providerId}/slots`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(slotData),
