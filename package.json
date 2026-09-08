@@ -2,6 +2,7 @@
   "name": "smart-home-service-automation",
   "version": "1.0.0",
   "description": "Smart Home Service Automation MVP built with MERN stack and Horizon UI Glassmorphism",
+  "type": "module",
   "scripts": {
     "build": "npm --prefix client run build",
     "server": "npm --prefix server start",
@@ -10,5 +11,11 @@
     "seed": "npm --prefix server run seed",
     "test:matching": "npm --prefix server run test:match",
     "build:client": "npm --prefix client run build"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "mongoose": "^8.9.5"
   }
 }
