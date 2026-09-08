@@ -1,6 +1,8 @@
+import mongoose from 'mongoose';
 import Provider from '../models/Provider.js';
 import Request from '../models/Request.js';
 import { calculateDistanceKm } from '../utils/geo.js';
+import { mockProviders } from '../seed/seeder.js';
 
 /**
  * Checks whether any booked slot overlaps with the requested time range.
@@ -144,19 +146,29 @@ export const matchProviders = async (req, res) => {
     }
 
     // 1. Query candidate providers matching category or partial match
-    const categoryQuery = {
-      $or: [
-        { category: new RegExp(serviceType.trim(), 'i') },
-        { bio: new RegExp(serviceType.trim(), 'i') },
-      ],
-      isAvailable: true,
-    };
-
-    let candidates = await Provider.find(categoryQuery);
-
-    // Fallback: if category specific is narrow, pull all available providers to recommend closest
-    if (candidates.length === 0) {
-      candidates = await Provider.find({ isAvailable: true });
+    let candidates = [];
+    if (mongoose.connection.readyState >= 1) {
+      const categoryQuery = {
+        $or: [
+          { category: new RegExp(serviceType.trim(), 'i') },
+          { bio: new RegExp(serviceType.trim(), 'i') },
+        ],
+        isAvailable: true,
+      };
+      candidates = await Provider.find(categoryQuery);
+      if (candidates.length === 0) {
+        candidates = await Provider.find({ isAvailable: true });
+      }
+    } else {
+      // In-memory fallback
+      candidates = mockProviders.filter(
+        (p) =>
+          p.category.toLowerCase().includes(serviceType.toLowerCase()) ||
+          p.bio.toLowerCase().includes(serviceType.toLowerCase())
+      );
+      if (candidates.length === 0) {
+        candidates = mockProviders;
+      }
     }
 
     // 2. Compute dynamic min and max price pool for accurate normalization
