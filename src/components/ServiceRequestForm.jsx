@@ -1,57 +1,74 @@
 import React, { useState, useEffect } from 'react';
 import {
+  Wrench,
+  Droplet,
   Zap,
-  Thermometer,
-  Shield,
-  Speaker,
-  SunMedium,
-  Cpu,
+  Sparkles,
+  Hammer,
+  Truck,
+  Car,
+  Scissors,
   MapPin,
   Clock,
   AlertTriangle,
-  Sparkles,
   ArrowRight,
   User,
   Phone,
   ShieldCheck,
+  Camera,
+  Image as ImageIcon,
+  X,
+  UploadCloud,
 } from 'lucide-react';
 
-const CATEGORIES = [
+export const CATEGORIES = [
   {
-    id: 'Smart Lighting & Control',
-    title: 'Smart Lighting & Shading',
-    desc: 'Lutron Caseta, architectural scene keypads & circadian rhythms',
+    id: 'Appliance & Gadget Repair',
+    title: 'Appliance & Gadget Repair',
+    desc: 'Smart refrigerators, washing machines, dryers, ovens & smart gadgets',
+    icon: Wrench,
+  },
+  {
+    id: 'Plumbing',
+    title: 'Plumbing',
+    desc: 'Pipe leak repairs, smart water shutoffs, drain clearing & water heaters',
+    icon: Droplet,
+  },
+  {
+    id: 'Electrical',
+    title: 'Electrical',
+    desc: 'Breaker panels, EV charger installs, smart switches & circuit wiring',
     icon: Zap,
   },
   {
-    id: 'HVAC & Climate Automation',
-    title: 'HVAC & Climate Automation',
-    desc: 'Ecobee, Nest, heat pump load balancing & damper diagnostics',
-    icon: Thermometer,
+    id: 'Cleaning & Pest Control',
+    title: 'Cleaning & Pest Control',
+    desc: 'Deep home cleaning, eco-friendly sanitization & pet-safe pest defense',
+    icon: Sparkles,
   },
   {
-    id: 'Smart Security & Access',
-    title: 'Security & Access Control',
-    desc: '4K PoE AI cameras, biometric locks & perimeter sensors',
-    icon: Shield,
+    id: 'Home Maintenance',
+    title: 'Home Maintenance',
+    desc: 'Drywall repairs, door realignment, smart deadbolts, gutters & caulking',
+    icon: Hammer,
   },
   {
-    id: 'Home Audio & Theater',
-    title: 'Whole-Home Audio & Cinema',
-    desc: 'Dolby Atmos, multi-zone Sonos matrix & architectural speakers',
-    icon: Speaker,
+    id: 'Moving & Shifting',
+    title: 'Moving & Shifting',
+    desc: 'Full residential moving, heavy furniture transport & item shifting',
+    icon: Truck,
   },
   {
-    id: 'Automated Blinds & Shading',
-    title: 'Proactive Health & Diagnostics',
-    desc: 'Continuous sensor health, hub checks & seasonal preventive tune-ups',
-    icon: Cpu,
+    id: 'Car Care & Repair',
+    title: 'Car Care & Repair',
+    desc: 'Driveway mobile mechanic, computerized OBD diagnostics & mobile detail',
+    icon: Car,
   },
   {
-    id: 'Smart Appliance Integration',
-    title: 'Enterprise Mesh & IoT Networks',
-    desc: 'Commercial Wi-Fi 7, Matter, Zigbee mesh & VLAN isolation',
-    icon: SunMedium,
+    id: 'Personal Care',
+    title: 'Personal Care',
+    desc: 'In-home hair styling, luxury grooming, massage & personal wellness',
+    icon: Scissors,
   },
 ];
 
@@ -67,6 +84,25 @@ const URGENCIES = [
   { level: 'Medium', label: 'Standard', sub: 'Within 24 hours' },
   { level: 'High', label: 'Priority', sub: 'Same-day urgent' },
   { level: 'Emergency', label: 'Emergency', sub: 'Immediate dispatch' },
+];
+
+const SAMPLE_ISSUE_PHOTOS = [
+  {
+    label: 'Pipe Leak',
+    url: 'https://images.unsplash.com/photo-1584992236310-6edddc08acff?auto=format&fit=crop&w=400&q=80',
+  },
+  {
+    label: 'Electrical Panel',
+    url: 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=400&q=80',
+  },
+  {
+    label: 'Appliance Fault',
+    url: 'https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?auto=format&fit=crop&w=400&q=80',
+  },
+  {
+    label: 'Car Engine Light',
+    url: 'https://images.unsplash.com/photo-1486006920555-c77dce18193b?auto=format&fit=crop&w=400&q=80',
+  },
 ];
 
 export default function ServiceRequestForm({
@@ -89,8 +125,12 @@ export default function ServiceRequestForm({
   const [urgency, setUrgency] = useState(initialUrgency || 'High');
   const [filterCollisions, setFilterCollisions] = useState(true);
   const [details, setDetails] = useState(
-    'Keypad relay intermittently failing to trigger secondary smart lighting scene.'
+    'Unit is displaying intermittent fault alert. Please inspect and bring necessary diagnostics tools.'
   );
+
+  // Optional Image Attachment State
+  const [issueImage, setIssueImage] = useState('');
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
 
   // Time Slot Selection
   const [timePreset, setTimePreset] = useState('immediate');
@@ -120,6 +160,20 @@ export default function ServiceRequestForm({
       setUrgency(initialUrgency);
     }
   }, [initialUrgency]);
+
+  // Handle Local Image File Upload
+  const handleFileUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setIsUploadingImage(true);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setIssueImage(reader.result);
+        setIsUploadingImage(false);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const getTimeRange = () => {
     const now = new Date();
@@ -165,6 +219,7 @@ export default function ServiceRequestForm({
       preferredTimeRange: timeRange,
       urgency,
       details,
+      image: issueImage,
       filterCollisions,
     };
 
@@ -174,7 +229,7 @@ export default function ServiceRequestForm({
   return (
     <div id="booking-section" className="py-10 max-w-5xl mx-auto">
       <div className="bg-white dark:bg-slate-900/90 border border-slate-200/90 dark:border-white/10 rounded-3xl p-6 sm:p-10 lg:p-12 shadow-clean-card relative overflow-hidden">
-        {/* Subtle accent background glow */}
+        {/* Accent background glow */}
         <div className="absolute top-0 right-0 w-80 h-80 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none -z-0" />
 
         {/* Section Title Header */}
@@ -182,29 +237,29 @@ export default function ServiceRequestForm({
           <div>
             <div className="contractor-tag mb-2">
               <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
-              <span>Collision Shield Dispatch</span>
+              <span>Smart Collision Shield Dispatch</span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-              Schedule Certified Specialist
+              Book a Service Specialist
             </h2>
             <p className="text-slate-600 dark:text-slate-300 text-sm mt-1 font-medium">
-              Multi-factor algorithmic matching: rating, Haversine proximity, price, and guaranteed zero double-booking.
+              Multi-factor algorithmic matching: Availability (25) + Distance (25) + Rating (20) + Price (15) + Expertise (15)
             </p>
           </div>
 
-          <div className="flex items-center gap-2.5 bg-slate-50 dark:bg-slate-800/80 px-4 py-2.5 rounded-full border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-800 dark:text-white">
+          <div className="flex items-center gap-2.5 bg-slate-50 dark:bg-slate-800/80 px-4 py-2 rounded-full border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-800 dark:text-white shadow-xs">
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-            <span>13 Technicians Available</span>
+            <span>16 Certified Providers Across 8 Categories</span>
           </div>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-8">
-          {/* 1. Service Category Selection */}
+          {/* 1. Service Category Selection (8 Categories) */}
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-3">
               1. Select Service Category
             </label>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
               {CATEGORIES.map((cat) => {
                 const Icon = cat.icon;
                 const isSelected = selectedCategory === cat.id;
@@ -212,33 +267,33 @@ export default function ServiceRequestForm({
                   <div
                     key={cat.id}
                     onClick={() => setSelectedCategory(cat.id)}
-                    className={`cursor-pointer rounded-2xl p-4.5 transition-all duration-200 border flex flex-col justify-between ${
+                    className={`cursor-pointer rounded-2xl p-4 transition-all duration-200 border flex flex-col justify-between ${
                       isSelected
-                        ? 'bg-[#EBF5F0] dark:bg-emerald-950/40 border-[#1E3A2B] dark:border-emerald-500 ring-2 ring-[#1E3A2B]/20 shadow-sm'
+                        ? 'bg-[#EBF5F0] dark:bg-emerald-950/40 border-[#1E3A2B] dark:border-emerald-500 ring-2 ring-[#1E3A2B]/20 shadow-xs'
                         : 'bg-white dark:bg-slate-800/40 border-slate-200 dark:border-white/10 hover:border-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
                     }`}
                   >
-                    <div className="flex items-start justify-between mb-3">
+                    <div className="flex items-start justify-between mb-2">
                       <div
-                        className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                        className={`w-9 h-9 rounded-xl flex items-center justify-center ${
                           isSelected
                             ? 'bg-[#1E3A2B] text-white'
                             : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
                         }`}
                       >
-                        <Icon className="w-5 h-5" />
+                        <Icon className="w-4 h-4" />
                       </div>
                       {isSelected && (
-                        <span className="text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-[#1E3A2B] text-white">
+                        <span className="text-[9px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#1E3A2B] text-white">
                           Selected
                         </span>
                       )}
                     </div>
                     <div>
-                      <h3 className="font-bold text-slate-900 dark:text-white text-sm">
+                      <h3 className="font-bold text-slate-900 dark:text-white text-xs leading-snug">
                         {cat.title}
                       </h3>
-                      <p className="text-xs text-slate-600 dark:text-slate-400 mt-1 leading-relaxed font-medium">
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 line-clamp-2">
                         {cat.desc}
                       </p>
                     </div>
@@ -253,7 +308,7 @@ export default function ServiceRequestForm({
             <div className="flex items-center justify-between mb-2">
               <label className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
                 <MapPin className="w-4 h-4 text-[#1E3A2B] dark:text-emerald-400" />
-                2. Service Address & Location Anchor
+                2. Service Location & Real-Time Proximity Anchor
               </label>
               <span className="text-xs text-slate-500 font-medium">
                 Haversine Distance Telemetry
@@ -272,7 +327,7 @@ export default function ServiceRequestForm({
                       setSelectedPreset(loc);
                       setCustomAddress(loc.address);
                     }}
-                    className={`text-xs px-3.5 py-1.5 rounded-full font-bold transition-all ${
+                    className={`text-xs px-3.5 py-1.5 rounded-full font-bold transition-all cursor-pointer ${
                       isMatch
                         ? 'bg-[#1E3A2B] text-white shadow-xs'
                         : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 border border-slate-200 dark:border-slate-700'
@@ -291,12 +346,12 @@ export default function ServiceRequestForm({
                 onChange={(e) => setCustomAddress(e.target.value)}
                 placeholder="Enter customer service address"
                 required
-                className="w-full rounded-xl px-4 py-3 text-sm font-medium border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#1E3A2B] focus:border-[#1E3A2B]"
+                className="w-full rounded-xl px-4 py-3 text-sm font-medium border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#1E3A2B]"
               />
               <div className="mt-2 flex items-center gap-3 text-[11px] text-slate-500 font-medium">
-                <span>Lat: {selectedPreset.lat}</span>
+                <span>Latitude: {selectedPreset.lat}</span>
                 <span>•</span>
-                <span>Lng: {selectedPreset.lng}</span>
+                <span>Longitude: {selectedPreset.lng}</span>
               </div>
             </div>
           </div>
@@ -307,13 +362,13 @@ export default function ServiceRequestForm({
             <div>
               <label className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 flex items-center gap-1.5 mb-2">
                 <Clock className="w-4 h-4 text-[#1E3A2B] dark:text-emerald-400" />
-                3. Preferred Time Slot
+                3. Preferred Date & Time Slot
               </label>
               <div className="grid grid-cols-3 gap-2 mb-3">
                 <button
                   type="button"
                   onClick={() => setTimePreset('immediate')}
-                  className={`p-2.5 rounded-xl text-center text-xs font-bold transition-all ${
+                  className={`p-2.5 rounded-xl text-center text-xs font-bold transition-all cursor-pointer ${
                     timePreset === 'immediate'
                       ? 'bg-[#1E3A2B] text-white shadow-sm'
                       : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 border border-slate-200 dark:border-slate-700'
@@ -324,7 +379,7 @@ export default function ServiceRequestForm({
                 <button
                   type="button"
                   onClick={() => setTimePreset('afternoon')}
-                  className={`p-2.5 rounded-xl text-center text-xs font-bold transition-all ${
+                  className={`p-2.5 rounded-xl text-center text-xs font-bold transition-all cursor-pointer ${
                     timePreset === 'afternoon'
                       ? 'bg-[#1E3A2B] text-white shadow-sm'
                       : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 border border-slate-200 dark:border-slate-700'
@@ -335,7 +390,7 @@ export default function ServiceRequestForm({
                 <button
                   type="button"
                   onClick={() => setTimePreset('tomorrow')}
-                  className={`p-2.5 rounded-xl text-center text-xs font-bold transition-all ${
+                  className={`p-2.5 rounded-xl text-center text-xs font-bold transition-all cursor-pointer ${
                     timePreset === 'tomorrow'
                       ? 'bg-[#1E3A2B] text-white shadow-sm'
                       : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 border border-slate-200 dark:border-slate-700'
@@ -350,7 +405,7 @@ export default function ServiceRequestForm({
                 <div className="text-xs">
                   <span className="font-bold text-slate-900 dark:text-white flex items-center gap-1">
                     <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-                    Strict Collision Prevention
+                    Strict Double-Booking Protection
                   </span>
                   <p className="text-slate-500 text-[11px] font-medium">
                     Filter out specialists with overlapping schedule slots
@@ -359,7 +414,7 @@ export default function ServiceRequestForm({
                 <button
                   type="button"
                   onClick={() => setFilterCollisions(!filterCollisions)}
-                  className={`w-11 h-6 flex items-center rounded-full p-1 transition-colors duration-200 ${
+                  className={`w-11 h-6 flex items-center rounded-full p-1 transition-colors duration-200 cursor-pointer ${
                     filterCollisions ? 'bg-[#1E3A2B]' : 'bg-slate-300 dark:bg-slate-700'
                   }`}
                 >
@@ -409,48 +464,136 @@ export default function ServiceRequestForm({
             </div>
           </div>
 
-          {/* 4. Customer Contact Details */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {/* 4. Basic Problem Details & Optional Image */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1.5 flex items-center gap-1">
-                <User className="w-3.5 h-3.5 text-slate-400" /> Customer Name
+              <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1.5">
+                5. Problem Details & Description
               </label>
-              <input
-                type="text"
-                value={customerName}
-                onChange={(e) => setCustomerName(e.target.value)}
-                required
-                className="w-full rounded-xl px-3.5 py-2.5 text-sm font-medium border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#1E3A2B] focus:border-[#1E3A2B]"
+              <textarea
+                rows={4}
+                value={details}
+                onChange={(e) => setDetails(e.target.value)}
+                placeholder="Describe the issue, device model, or maintenance required..."
+                className="w-full rounded-xl px-3.5 py-2.5 text-xs font-medium border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#1E3A2B]"
               />
             </div>
+
+            {/* Optional Image Upload & Preview */}
             <div>
-              <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1.5 flex items-center gap-1">
-                <Phone className="w-3.5 h-3.5 text-slate-400" /> Phone Contact
-              </label>
-              <input
-                type="text"
-                value={customerPhone}
-                onChange={(e) => setCustomerPhone(e.target.value)}
-                required
-                className="w-full rounded-xl px-3.5 py-2.5 text-sm font-medium border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#1E3A2B] focus:border-[#1E3A2B]"
-              />
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                  <Camera className="w-3.5 h-3.5 text-[#1E3A2B] dark:text-emerald-400" />
+                  <span>Optional Problem Photo</span>
+                </label>
+                <span className="text-[11px] text-slate-400 font-medium">Helps technician bring exact parts</span>
+              </div>
+
+              {issueImage ? (
+                <div className="relative rounded-2xl border border-slate-200 dark:border-slate-700 p-2 bg-slate-50 dark:bg-slate-800 flex items-center gap-3">
+                  <img
+                    src={issueImage}
+                    alt="Attached Issue"
+                    className="w-16 h-16 rounded-xl object-cover border border-slate-300 dark:border-slate-600 shadow-sm"
+                  />
+                  <div className="flex-1 min-w-0 text-xs">
+                    <span className="font-bold text-slate-900 dark:text-white block truncate">
+                      Photo Attached Successfully
+                    </span>
+                    <span className="text-[11px] text-emerald-700 dark:text-emerald-400">
+                      Transmitted to dispatched technician
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setIssueImage('')}
+                    className="p-1.5 rounded-full hover:bg-rose-100 text-rose-500 transition-colors cursor-pointer"
+                    title="Remove image"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              ) : (
+                <div className="border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-2xl p-3 text-center bg-slate-50/50 dark:bg-slate-800/30">
+                  <label className="cursor-pointer flex flex-col items-center justify-center">
+                    <UploadCloud className="w-5 h-5 text-slate-400 mb-1" />
+                    <span className="text-xs font-bold text-slate-700 dark:text-slate-200">
+                      Upload photo from device
+                    </span>
+                    <span className="text-[10px] text-slate-400 mt-0.5">PNG, JPG or WEBP</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileUpload}
+                      className="hidden"
+                    />
+                  </label>
+
+                  {/* Preset quick test images */}
+                  <div className="mt-2.5 pt-2 border-t border-slate-200 dark:border-slate-700/60 flex items-center justify-center gap-1.5 flex-wrap">
+                    <span className="text-[10px] text-slate-400 font-semibold mr-1">Sample:</span>
+                    {SAMPLE_ISSUE_PHOTOS.map((sample, sIdx) => (
+                      <button
+                        key={sIdx}
+                        type="button"
+                        onClick={() => setIssueImage(sample.url)}
+                        className="text-[10px] px-2 py-0.5 rounded-md bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 hover:text-slate-900 dark:text-slate-300 font-medium cursor-pointer"
+                      >
+                        {sample.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
-          {/* Service Notes */}
+          {/* 5. Customer Contact Information */}
           <div>
-            <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1.5">
-              Service Notes & Problem Description
+            <label className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 block mb-2">
+              6. Contact Information
             </label>
-            <textarea
-              rows={2}
-              value={details}
-              onChange={(e) => setDetails(e.target.value)}
-              className="w-full rounded-xl px-3.5 py-2.5 text-sm font-medium border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#1E3A2B] focus:border-[#1E3A2B]"
-            />
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div>
+                <label className="text-[11px] font-semibold text-slate-600 dark:text-slate-400 block mb-1">
+                  Full Name
+                </label>
+                <input
+                  type="text"
+                  value={customerName}
+                  onChange={(e) => setCustomerName(e.target.value)}
+                  required
+                  className="w-full rounded-xl px-3.5 py-2.5 text-xs font-medium border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-[#1E3A2B]"
+                />
+              </div>
+              <div>
+                <label className="text-[11px] font-semibold text-slate-600 dark:text-slate-400 block mb-1">
+                  Phone Contact
+                </label>
+                <input
+                  type="text"
+                  value={customerPhone}
+                  onChange={(e) => setCustomerPhone(e.target.value)}
+                  required
+                  className="w-full rounded-xl px-3.5 py-2.5 text-xs font-medium border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-[#1E3A2B]"
+                />
+              </div>
+              <div>
+                <label className="text-[11px] font-semibold text-slate-600 dark:text-slate-400 block mb-1">
+                  Email Address
+                </label>
+                <input
+                  type="email"
+                  value={customerEmail}
+                  onChange={(e) => setCustomerEmail(e.target.value)}
+                  required
+                  className="w-full rounded-xl px-3.5 py-2.5 text-xs font-medium border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-[#1E3A2B]"
+                />
+              </div>
+            </div>
           </div>
 
-          {/* Primary Action Button */}
+          {/* Primary Submit Action Button */}
           <button
             type="submit"
             disabled={isLoading}
@@ -459,7 +602,7 @@ export default function ServiceRequestForm({
             {isLoading ? (
               <div className="flex items-center gap-2">
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                <span>Running Algorithmic Matching...</span>
+                <span>Calculating Multi-Factor Rankings...</span>
               </div>
             ) : (
               <>

@@ -183,6 +183,7 @@ export default function App() {
         preferredTimeRange: pendingFormPayload.preferredTimeRange,
         urgency: pendingFormPayload.urgency,
         details: pendingFormPayload.details,
+        image: pendingFormPayload.image || '',
         assignedProvider: provider._id,
         matchedProviders: matches.slice(0, 5).map((m) => ({
           providerId: m.provider._id,

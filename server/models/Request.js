@@ -99,6 +99,10 @@ const RequestSchema = new mongoose.Schema(
       type: String,
       default: 'Smart home maintenance and configuration request.',
     },
+    image: {
+      type: String,
+      default: '',
+    },
     status: {
       type: String,
       enum: ['Requested', 'Accepted', 'On the Way', 'In Progress', 'Completed'],

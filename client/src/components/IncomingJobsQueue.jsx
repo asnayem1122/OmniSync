@@ -10,6 +10,8 @@ import {
   FileText,
   Calendar,
   Sparkles,
+  Camera,
+  Maximize2,
 } from 'lucide-react';
 
 export default function IncomingJobsQueue({
@@ -20,6 +22,7 @@ export default function IncomingJobsQueue({
   isProcessing,
 }) {
   const [rejectedIds, setRejectedIds] = useState([]);
+  const [selectedImageModal, setSelectedImageModal] = useState(null);
 
   // Filter for jobs that are in 'Requested' status and not locally rejected
   const queueJobs = requests.filter(
@@ -136,12 +139,35 @@ export default function IncomingJobsQueue({
                   </div>
 
                   {/* Details Box */}
-                  <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-white/[0.03] border border-slate-200/80 dark:border-white/5 text-xs text-slate-700 dark:text-slate-300 mb-5 leading-relaxed font-medium">
+                  <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-white/[0.03] border border-slate-200/80 dark:border-white/5 text-xs text-slate-700 dark:text-slate-300 mb-4 leading-relaxed font-medium">
                     <span className="text-slate-500 font-bold block text-[10px] uppercase mb-1">
                       Problem Scope:
                     </span>
                     {job.details || 'No specific notes provided.'}
                   </div>
+
+                  {/* Attached Customer Image (if present) */}
+                  {job.image && (
+                    <div className="mb-4">
+                      <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 flex items-center gap-1.5">
+                        <Camera className="w-3 h-3 text-emerald-600" /> Attached Photo:
+                      </span>
+                      <div
+                        onClick={() => setSelectedImageModal(job.image)}
+                        className="relative group rounded-xl overflow-hidden border border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-slate-800 cursor-pointer max-h-32 aspect-video flex items-center justify-center shadow-xs"
+                      >
+                        <img
+                          src={job.image}
+                          alt="Customer Problem"
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                        <div className="absolute inset-0 bg-slate-900/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5 text-white text-xs font-bold backdrop-blur-xs">
+                          <Maximize2 className="w-3.5 h-3.5" />
+                          <span>View Full Photo</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Accept / Reject Buttons */}
@@ -167,6 +193,36 @@ export default function IncomingJobsQueue({
               </div>
             );
           })}
+        </div>
+      )}
+
+      {/* Full Photo Modal */}
+      {selectedImageModal && (
+        <div
+          className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4"
+          onClick={() => setSelectedImageModal(null)}
+        >
+          <div
+            className="relative max-w-2xl w-full bg-white dark:bg-slate-900 rounded-3xl p-4 border border-white/20 shadow-2xl overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-200 dark:border-white/10">
+              <span className="text-xs font-bold text-slate-800 dark:text-white flex items-center gap-2">
+                <Camera className="w-4 h-4 text-emerald-600" /> Customer Problem Attachment
+              </span>
+              <button
+                onClick={() => setSelectedImageModal(null)}
+                className="p-1 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <img
+              src={selectedImageModal}
+              alt="Problem Full View"
+              className="w-full max-h-[70vh] object-contain rounded-2xl bg-black/40"
+            />
+          </div>
         </div>
       )}
     </div>
