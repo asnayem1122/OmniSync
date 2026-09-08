@@ -578,21 +578,6 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ---
 
-## 🚀 Vercel Deployment Guide
-
-1. Go to [vercel.com](https://vercel.com) and log in with GitHub.
-2. Click **Add New...** $\rightarrow$ **Project**, then import **`asnayem1122/OmniSync`** (`main` branch).
-3. Confirm deployment settings:
-   - **Framework Preset**: `Vite` *(auto-detected)*
-   - **Root Directory**: `./` *(default)*
-   - **Build Command**: `vite build` *(default)*
-   - **Output Directory**: `dist` *(default)*
-4. Environment Variables:
-   - `MONGO_URI` (Optional): Add if using MongoDB Atlas; if omitted, OmniSync uses resilient in-memory fallback.
-5. Click **Deploy**.
-
----
-
 ## 🖥️ Platform Walkthrough & Core User Flows
 
 1. **Hardware Defect Diagnosis & Algorithmic Dispatch**
