@@ -179,8 +179,8 @@ export default function RecommendationView({
                   </div>
                   <div className="bg-white dark:bg-white/[0.03] p-1.5 rounded-lg border border-slate-200/60 dark:border-transparent shadow-xs">
                     <span className="text-[10px] text-slate-500 dark:text-slate-400 block font-medium">Price</span>
-                    <span className="font-extrabold text-slate-900 dark:text-white">{breakdown.price}</span>
-                    <span className="text-[9px] text-slate-400">/15</span>
+                    <span className="font-extrabold text-slate-900 dark:text-white">$25</span>
+                    <span className="text-[9px] text-emerald-600 dark:text-emerald-400 font-semibold block">Diagnostic Fee</span>
                   </div>
                   <div className="bg-white dark:bg-white/[0.03] p-1.5 rounded-lg border border-slate-200/60 dark:border-transparent shadow-xs">
                     <span className="text-[10px] text-slate-500 dark:text-slate-400 block font-medium">Expertise</span>

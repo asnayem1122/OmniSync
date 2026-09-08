@@ -72,7 +72,8 @@ export function computeMatchScore({
   const price = Number(provider.basePrice) || 80;
   const priceRange = Math.max(1, maxPricePool - minPricePool);
   const normalizedPriceRatio = Math.max(0, Math.min(1, (price - minPricePool) / priceRange));
-  const priceScore = 15 * (1 - normalizedPriceRatio);
+  // Guarantee a competitive baseline so certified master providers are not penalized to 0
+  const priceScore = Math.max(4, 15 * (1 - normalizedPriceRatio * 0.75));
 
   // 5. Service Expertise Score (15 pts max)
   const expertiseMap = {
