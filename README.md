@@ -209,11 +209,22 @@ Ensure the latest code is on your repository `https://github.com/asnayem1122/Sma
 2. Click **Add New...** $\rightarrow$ **Project**.
 3. Select **`Smart_Home_Automation_SaaS`**.
 
-### Step 3: Configure Project Settings
-- **Framework Preset**: Vite
-- **Root Directory**: `./` (leave as root)
-- **Build Command**: `npm run build`
-- **Output Directory**: `client/dist`
+### Option B: Standalone `/server` Backend Deployment (Framework: Other)
+If deploying `/server` as an independent backend service on Vercel:
+1. **Root Directory**: Set to `server`.
+2. **Framework Preset**: Select **Other**.
+3. **Build Command**: Leave empty / default.
+4. **Output Directory**: Leave empty / default.
+5. Vercel will detect [`server/vercel.json`](file:///d:/Code/Smart_Home_Automation/server/vercel.json) and compile using `@vercel/node`:
+   ```json
+   {
+     "version": 2,
+     "builds": [{ "src": "index.js", "use": "@vercel/node" }],
+     "routes": [{ "src": "/(.*)", "dest": "index.js" }]
+   }
+   ```
+6. **Environment Variables**: Add `MONGO_URI` (MongoDB Atlas) and `NODE_ENV=production`.
+7. Once deployed, test your live endpoint at `https://<your-server-domain>.vercel.app/health`.
 
 ### Step 4: Environment Variables
 Add the following in the Vercel Dashboard under **Environment Variables**:
