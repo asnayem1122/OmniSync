@@ -18,13 +18,14 @@
    - [Sequence 2: 5-Stage Dispatch Pipeline & Double-Booking Shield](#2-5-stage-dispatch-pipeline--double-booking-shield)
    - [Sequence 3: Post-Service Rating & Mathematical Recalculation](#3-post-service-rating--instant-recalculation)
 4. [Comprehensive Feature Matrix](#-comprehensive-feature-matrix)
-5. [Algorithmic Matching Engine Formulation](#-algorithmic-matching-engine-formulation)
-6. [Tech Stack & Exact Role of Every Technology](#-tech-stack--tool-breakdown)
-7. [RESTful API Specification & Endpoints](#-restful-api-specification)
-8. [Automated Verification & Test Suites (52/52 Passed)](#-automated-verification--test-suites)
-9. [Local Development Quick Start](#-local-development-quick-start)
-10. [Vercel Deployment Guide](#-vercel-deployment-guide)
-11. [Hackathon Demo Script (3-Minute Walkthrough)](#-hackathon-demo-script-3-minute-walkthrough)
+5. [In-Depth Technical Feature Specifications](#-in-depth-technical-feature-specifications)
+6. [Algorithmic Matching Engine Formulation](#-algorithmic-matching-engine-formulation)
+7. [Tech Stack & Exact Role of Every Technology](#-tech-stack--tool-breakdown)
+8. [RESTful API Specification & Endpoints](#-restful-api-specification)
+9. [Automated Verification & Test Suites (52/52 Passed)](#-automated-verification--test-suites)
+10. [Local Development Quick Start](#-local-development-quick-start)
+11. [Vercel Deployment Guide](#-vercel-deployment-guide)
+12. [Hackathon Demo Script (3-Minute Walkthrough)](#-hackathon-demo-script-3-minute-walkthrough)
 
 ---
 
@@ -263,6 +264,130 @@ sequenceDiagram
 | **10** | **Role-Based Authentication** | Modal authentication for Customer and Specialist personas with pre-filled demo accounts for instant zero-hassle hackathon evaluations. | Secure session handling with immediate role-specific views. |
 | **11** | **Bangladeshi Taka (BDT ৳) Standard** | All hourly fees, diagnostic visit rates, and accrued earnings standardized to BDT (**`৳`**, Unicode `U+09F3`). | Complete regional relevance for local deployment. |
 | **12** | **Resilient Zero-Config Deployment** | Automatic fallback to MongoDB Memory Server when external database connection strings are absent. | Works out-of-the-box in local environments and Vercel Serverless. |
+
+---
+
+## 🔍 In-Depth Technical Feature Specifications
+
+### 1. 8 Smart Home & Contractor Verticals (Dhaka Metro)
+- **Overview**: OmniSync covers eight distinct smart home and contractor verticals, each pre-seeded with certified, pre-screened specialists situated across Dhaka's key neighborhoods (Gulshan, Banani, Dhanmondi, Uttara, Mirpur, Mohakhali, Baridhara, and Badda).
+- **Supported Categories & Scope**:
+  1. **Appliance & Gadget Repair**: Smart inverter AC diagnostics, compressor maintenance, IoT refrigeration, smart TVs, microwave PCB troubleshooting.
+  2. **Plumbing Systems**: Precision acoustic leak detection, booster pump installation, sanitary diagnostics, solar water heater lines.
+  3. **Electrical & Power Grid**: Smart home automation lines, breaker panel upgrades, high-voltage switchgear, solar inverter synchronization.
+  4. **Cleaning & Pest Control**: Hospital-grade deep sanitation, electrostatic surface disinfection, upholstery steam cleaning, integrated pest management.
+  5. **Home Maintenance & Carpentry**: Smart lock integration, architectural carpentry, precision acoustic insulation, drywall & structural repairs.
+  6. **Moving & Shifting Logistics**: Insured heavy equipment transit, precision packaging for delicate electronics, multi-room relocation.
+  7. **At-Home Car Care & Diagnostics**: OBD-II computer diagnostics, on-site battery testing, hybrid cooling flush, doorstep auto detailing.
+  8. **Personal Care & Grooming Suite**: Certified mobile grooming specialists, sanitization protocols, private at-home aesthetic therapies.
+- **Data Model**: Implemented in [`server/models/Provider.js`](file:///d:/Code/Smart_Home_Automation/server/models/Provider.js) and seeded via [`server/seed/seeder.js`](file:///d:/Code/Smart_Home_Automation/server/seed/seeder.js). Each specialist maintains geographic coordinates, baseline hourly pricing in BDT (`৳`), rating aggregates, certified badges, and a dynamic calendar array of `bookedSlots`.
+
+---
+
+### 2. Hardware Problem Image Attachment & Real-Time Preview
+- **User Experience**: During Step 2 of the customer booking flow, homeowners can drag-and-drop or select photos of faulty machinery (e.g., leaking pipe joint, blown circuit breaker, error code on AC display). A crisp thumbnail preview appears instantly with an inline delete control.
+- **Technical Architecture**:
+  - Located in [`src/components/ServiceRequestForm.jsx`](file:///d:/Code/Smart_Home_Automation/src/components/ServiceRequestForm.jsx).
+  - Uses the HTML5 `FileReader` API to generate client-side `data:image/...;base64` strings for zero-latency preview before network transmission.
+  - Payloads are validated for supported MIME types (`image/jpeg`, `image/png`, `image/webp`) and size limits (< 5MB) to protect serverless memory.
+  - The photo URL/base64 is stored in the `problemImage` field on the [`Request`](file:///d:/Code/Smart_Home_Automation/server/models/Request.js) document and rendered directly on the technician's incoming queue card for pre-dispatch diagnostic triage.
+
+---
+
+### 3. Multi-Factor Algorithmic Matching Engine
+- **Core Value**: Rather than showing an arbitrary or paid list of contractors, OmniSync evaluates candidates through a multi-variable meritocracy that normalizes qualitative and geographic attributes into an intuitive $0 - 100$ score.
+- **Scoring Weights & Criteria**:
+  - **Availability ($25\%$)**: $25$ pts if calendar has zero conflicting bookings; $20$ pts if open during requested window with adjacent jobs; $0$ pts if colliding.
+  - **Haversine Distance ($25\%$)**: Calculates the shortest spherical distance between the customer's coordinates and the specialist's home workshop. Maximum points ($25$) awarded within $2\text{ km}$, decaying linearly to $0$ pts at $30\text{ km}$.
+  - **Rating History ($20\%$)**: Proportional score calculated as $(R / 5.0) \times 20$. A $4.9 \bigstar$ technician receives $19.6$ points.
+  - **Price Competitiveness ($15\%$)**: Evaluates the specialist's hourly rate relative to the minimum and maximum price spread within that category. A lower rate yields higher competitiveness points, with an assured non-zero baseline.
+  - **Expertise Level ($15\%$)**: Tiered allocation based on verified qualifications: Master ($15\text{ pts}$), Expert ($12\text{ pts}$), Intermediate ($9\text{ pts}$), Beginner ($6\text{ pts}$).
+  - **Emergency Urgency Boost ($0 - 5\text{ pts}$)**: For `Emergency` tickets, awards $+3$ bonus points for proximity under $8\text{ km}$ and $+2$ bonus points for Master/Expert certifications.
+- **Diagnostic Transparency**: In [`src/components/RecommendationView.jsx`](file:///d:/Code/Smart_Home_Automation/src/components/RecommendationView.jsx), each candidate card displays an animated SVG **Circular Progress Meter** with a detailed modal breakdown showing exactly how many points were earned across distance, rating, price, and qualification.
+
+---
+
+### 4. Collision Shield™ (Double-Booking Prevention Algorithm)
+- **Mathematical Principle**: Prevents appointment overlaps by evaluating temporal boundary intersections against every candidate's `bookedSlots` array:
+  $$\text{Collision} \iff (T_{\text{start}} < B_{\text{end}}) \land (T_{\text{end}} > B_{\text{start}})$$
+- **Boundary Precision**: The engine supports edge-to-edge scheduling: if a specialist completes an appointment at 11:30 AM, a subsequent booking starting precisely at 11:30 AM is **not** flagged as a collision, enabling maximum contractor utilization.
+- **Automated Locking**: Upon job confirmation via `POST /api/requests` or technician acceptance via `PATCH /api/requests/:id/status`, the requested window is atomically appended to `provider.bookedSlots`, permanently locking the slot across all concurrent customer searches.
+
+---
+
+### 5. 5-Stage Live Dispatch Pipeline State Machine
+- **State Progression**:
+  1. `Requested`: Customer submitted ticket; queued in real-time dispatch pool.
+  2. `Accepted`: Specialist claimed order; schedule locked in database.
+  3. `On the Way`: Specialist en route; triggers vehicle telemetry and live GPS tracking.
+  4. `In Progress`: Physical diagnostic testing and repairs active on-site.
+  5. `Completed`: Work verified; prompts customer for 5-star review and updates platform metrics.
+- **Audit Logging**: Every stage transition appends an entry to `request.statusHistory` with an exact UTC timestamp, actor ID, and optional diagnostic transition note (e.g. *"Arrived on site; multimeter diagnostics initiated"*).
+- **Bidirectional Synchronization**: State updates executed from the Specialist Workspace instantly update the Customer Live Tracker without requiring manual page reloads.
+
+---
+
+### 6. Interactive GIS Road Telemetry & Animated Vector Map
+- **Technical Implementation**: Built in [`src/components/LiveServiceMap.jsx`](file:///d:/Code/Smart_Home_Automation/src/components/LiveServiceMap.jsx) using an HTML5 vector canvas road coordinate system.
+- **Operational Features**:
+  - **Animated Vehicle Marker**: Renders a moving contractor service vehicle navigating realistic road waypoints between workshop coordinates and the customer residence.
+  - **Heading & Orientation**: Smoothly rotates the vehicle icon to match the instantaneous tangent angle of the route trajectory.
+  - **Real-Time GPS HUD**: Displays current latitude/longitude coordinates, speed telemetry (km/h), and an active decremental ETA countdown.
+  - **Visual Status Badging**: Displays pulse animations during `On the Way` and switches to static arrival beacons when `In Progress` begins.
+
+---
+
+### 7. Contractor Control Workspace & Visual Calendar ERP
+- **Persona Switcher**: Allows evaluators and contractors to switch between profiles (e.g., Electrical Master *Farhan Kabir* or HVAC Specialist *Mahmud Hasan*) to test role-specific workflows.
+- **Incoming Jobs Queue**: Displays unassigned or dispatched tickets within the contractor's specific vertical with glowing one-click **Accept** and **Decline** controls.
+- **Visual Calendar Timeline**: A timeline component in [`src/components/ProviderScheduleView.jsx`](file:///d:/Code/Smart_Home_Automation/src/components/ProviderScheduleView.jsx) rendering blocked appointment windows in amber alongside free availability slots.
+- **Manual Busy Block Creation**: Contractors can block out personal or workshop hours directly on their calendar, preventing algorithmic assignment during maintenance periods.
+- **Live Revenue Metrics**: Accrues and displays completed service earnings in BDT (**`৳`**), total jobs fulfilled, and current aggregate rating.
+
+---
+
+### 8. Post-Service 5-Star Rating Modal & Instant Recalculation
+- **Customer Modal**: Built in [`src/components/RatingReviewModal.jsx`](file:///d:/Code/Smart_Home_Automation/src/components/RatingReviewModal.jsx). Automatically appears upon stage transition to `Completed`.
+- **Feedback Taxonomy**: Customers select 1 to 5 stars, tap quick-selection feedback tags (*"On-Time Arrival"*, *"Expert Knowledge"*, *"Clean Worksite"*, *"Fair Pricing"*), and optionally leave written remarks.
+- **Mathematical Recalculation**: Handled server-side in [`server/controllers/requestController.js`](file:///d:/Code/Smart_Home_Automation/server/controllers/requestController.js) via the weighted average formula:
+  $$R_{\text{new}} = \text{round}\left(\frac{(R_{\text{current}} \times N) + R_{\text{user}}}{N + 1}, 1\right)$$
+- **Social Proof**: The updated rating and incremented review count are immediately persisted to the provider's database record and reflected in subsequent matching computations.
+
+---
+
+### 9. Testimonials-13 Marquee & Certified Contractor Insignias
+- **UI Component**: Engineered with the shadcn **Testimonials-13** specification in [`src/components/ui/testimonials-13.tsx`](file:///d:/Code/Smart_Home_Automation/src/components/ui/testimonials-13.tsx).
+- **Features**:
+  - Infinite-loop horizontal CSS marquee showcasing real reviews from smart home clients across Dhaka.
+  - Certified contractor brand insignias (*SmartHVAC Certified*, *Apex Precision Repairs*, *Gulshan ElectroPro*).
+  - Interactive category filter tabs allowing users to view testimonials specific to Electrical, Plumbing, or Appliance Repair.
+
+---
+
+### 10. Role-Based Authentication System
+- **Authentication Modal**: Implemented in [`src/components/AuthModal.jsx`](file:///d:/Code/Smart_Home_Automation/src/components/AuthModal.jsx) with dedicated tabs for **Customer Sign In** and **Specialist Portal Access**.
+- **Hackathon Quick-Fill Buttons**: Includes instant 1-click credential auto-fill for demo accounts:
+  - *Demo Customer* (`tanjim@omnisync.io`)
+  - *Demo Specialist* (`farhan.kabir@apexrepairs.com`)
+- **Session State**: Manages simulated JWT session tokens and user avatar initials in React context, instantly tailoring navigation actions to the authenticated persona.
+
+---
+
+### 11. Bangladeshi Taka (BDT ৳) Financial Standardization
+- **Localization Standard**: Strict uniformity of currency across all backend schemas and client interfaces.
+- **Formatted Values**:
+  - Hourly service rates: `৳65/hr` – `৳95/hr`
+  - Emergency diagnostic call-out fee: `৳25 Diagnostic Fee`
+  - Contractor accrued balance: `৳2,450 BDT`
+  - Verified symbol encoding: Bangladeshi Taka symbol (**`৳`**, Unicode `U+09F3`).
+
+---
+
+### 12. Resilient Zero-Config Hybrid Persistence Layer
+- **Dual-Mode Database Architecture**:
+  - **Cloud Production**: Connects to MongoDB Atlas when `MONGO_URI` is provided in environment variables.
+  - **Zero-Config Local Fallback**: When `MONGO_URI` is omitted, automatically spins up an embedded **MongoDB Memory Server** (`mongodb-memory-server@10.1.3`), auto-seeds 16 specialist profiles, and executes all operations with zero configuration.
+- **Serverless Compatibility**: Optimized with cached connection pooling and disabled Mongoose command buffering to eliminate connection timeouts in Vercel Serverless environments.
 
 ---
 
