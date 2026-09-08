@@ -21,8 +21,8 @@ export default function TrustAndShowcase({ onScheduleClick, providers = [], onSe
       {/* ---------------------------------------------------- */}
       {/* 1. Before / After Craftsmanship Comparison */}
       {/* ---------------------------------------------------- */}
-      <div className="bg-white dark:bg-slate-900/70 border border-slate-200/90 dark:border-white/10 rounded-3xl p-6 sm:p-10 lg:p-12 shadow-clean-card">
-        <div className="max-w-3xl mx-auto text-center mb-10">
+      <div className="bg-white dark:bg-slate-900/70 border border-slate-200/90 dark:border-white/10 rounded-2xl sm:rounded-3xl p-4 sm:p-10 lg:p-12 shadow-clean-card">
+        <div className="max-w-3xl mx-auto text-center mb-8 sm:mb-10">
           <div className="contractor-tag mb-3">
             <Sliders className="w-3.5 h-3.5 text-emerald-600" />
             <span>Contractor Standards</span>
@@ -35,20 +35,20 @@ export default function TrustAndShowcase({ onScheduleClick, providers = [], onSe
           </p>
 
           {/* Toggle Switch */}
-          <div className="inline-flex p-1.5 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 mt-6">
+          <div className="flex flex-col sm:inline-flex sm:flex-row p-1.5 rounded-2xl sm:rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 mt-6 gap-1 w-full sm:w-auto max-w-md mx-auto">
             <button
               onClick={() => setActiveCompareView('before')}
-              className={`px-5 py-2 rounded-full text-xs font-bold transition-all ${
+              className={`px-4 sm:px-5 py-2.5 sm:py-2 rounded-xl sm:rounded-full text-xs font-bold transition-all text-center cursor-pointer ${
                 activeCompareView === 'before'
                   ? 'bg-rose-500 text-white shadow-sm'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
               }`}
             >
-              Without OmniSync (DIY & Legacy)
+              Without OmniSync (Legacy DIY)
             </button>
             <button
               onClick={() => setActiveCompareView('after')}
-              className={`px-5 py-2 rounded-full text-xs font-bold transition-all ${
+              className={`px-4 sm:px-5 py-2.5 sm:py-2 rounded-xl sm:rounded-full text-xs font-bold transition-all text-center cursor-pointer ${
                 activeCompareView === 'after'
                   ? 'bg-[#1E3A2B] text-white shadow-sm'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
@@ -60,10 +60,10 @@ export default function TrustAndShowcase({ onScheduleClick, providers = [], onSe
         </div>
 
         {/* Comparison Content */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 items-stretch">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6 lg:gap-8 items-stretch">
           {/* Box 1: Without OmniSync */}
           <div
-            className={`p-7 rounded-2xl border transition-all duration-300 ${
+            className={`p-5 sm:p-7 rounded-2xl border transition-all duration-300 ${
               activeCompareView === 'before'
                 ? 'border-rose-400/80 bg-rose-500/[0.03] ring-2 ring-rose-400/20'
                 : 'border-slate-200 dark:border-white/5 opacity-70'

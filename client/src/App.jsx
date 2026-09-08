@@ -381,7 +381,7 @@ export default function App() {
         )}
 
         {/* Main View Area */}
-        <main className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+        <main className="px-3 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full pb-24 sm:pb-12">
           {activeTab === 'request' && (
             <div className="space-y-4 sm:space-y-6">
               {/* Signature Hero Section */}

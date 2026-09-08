@@ -207,7 +207,7 @@ export default function LiveServiceMap({
 
       {/* Main Map Viewport */}
       <div
-        className={`relative w-full aspect-[16/9] sm:aspect-[21/10] overflow-hidden select-none transition-colors duration-500 ${
+        className={`relative w-full min-h-[250px] sm:min-h-[360px] aspect-[16/9] sm:aspect-[21/10] overflow-hidden select-none transition-colors duration-500 ${
           isDark
             ? 'bg-[#060D17] text-emerald-400'
             : 'bg-[#EBF2F0] dark:bg-[#0B1522] text-slate-800'
@@ -568,54 +568,54 @@ export default function LiveServiceMap({
         </div>
 
         {/* Floating Telemetry Glass Card (HUD) */}
-        <div className="absolute top-3 left-3 right-3 sm:right-auto sm:max-w-xs p-3.5 rounded-2xl bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border border-white/80 dark:border-white/10 shadow-spatial-md space-y-2.5 pointer-events-auto">
-          <div className="flex items-center justify-between pb-2 border-b border-slate-200/80 dark:border-white/10">
-            <div className="flex items-center gap-2">
+        <div className="absolute top-2.5 left-2.5 sm:top-3 sm:left-3 right-2.5 sm:right-auto sm:max-w-xs p-2.5 sm:p-3.5 rounded-xl sm:rounded-2xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-white/80 dark:border-white/10 shadow-spatial-md space-y-1.5 sm:space-y-2.5 pointer-events-auto">
+          <div className="flex items-center justify-between pb-1.5 sm:pb-2 border-b border-slate-200/80 dark:border-white/10">
+            <div className="flex items-center gap-1.5 sm:gap-2">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-800 dark:text-white">
+              <span className="text-[10px] sm:text-[11px] font-extrabold uppercase tracking-wider text-slate-800 dark:text-white">
                 Transit Telemetry
               </span>
             </div>
-            <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold">
+            <span className="text-[9px] sm:text-[10px] text-emerald-600 dark:text-emerald-400 font-bold">
               {transitProgress >= 1 ? 'ARRIVED' : 'EN ROUTE'}
             </span>
           </div>
 
-          <div className="grid grid-cols-2 gap-2 text-xs">
-            <div className="p-2 rounded-xl bg-slate-50 dark:bg-white/[0.04] border border-slate-200/60 dark:border-white/5">
-              <span className="text-[10px] text-slate-500 dark:text-slate-400 block font-medium">
-                Distance Remaining
+          <div className="grid grid-cols-2 gap-1.5 sm:gap-2 text-xs">
+            <div className="p-1.5 sm:p-2 rounded-lg sm:rounded-xl bg-slate-50 dark:bg-white/[0.04] border border-slate-200/60 dark:border-white/5">
+              <span className="text-[9px] sm:text-[10px] text-slate-500 dark:text-slate-400 block font-medium">
+                Distance
               </span>
-              <span className="text-sm font-extrabold text-slate-900 dark:text-white">
+              <span className="text-xs sm:text-sm font-extrabold text-slate-900 dark:text-white">
                 {remainingDistKm} km
               </span>
             </div>
 
-            <div className="p-2 rounded-xl bg-slate-50 dark:bg-white/[0.04] border border-slate-200/60 dark:border-white/5">
-              <span className="text-[10px] text-slate-500 dark:text-slate-400 block font-medium">
-                Estimated Arrival
+            <div className="p-1.5 sm:p-2 rounded-lg sm:rounded-xl bg-slate-50 dark:bg-white/[0.04] border border-slate-200/60 dark:border-white/5">
+              <span className="text-[9px] sm:text-[10px] text-slate-500 dark:text-slate-400 block font-medium">
+                ETA
               </span>
-              <span className="text-sm font-extrabold text-emerald-600 dark:text-emerald-400">
+              <span className="text-xs sm:text-sm font-extrabold text-emerald-600 dark:text-emerald-400">
                 {etaMinutes === 0 ? 'On Site' : `~${etaMinutes} mins`}
               </span>
             </div>
           </div>
 
           {/* Real-time coordinates readout */}
-          <div className="text-[10px] font-mono text-slate-500 dark:text-slate-400 bg-slate-100/80 dark:bg-black/30 p-2 rounded-xl flex items-center justify-between">
+          <div className="hidden sm:flex text-[10px] font-mono text-slate-500 dark:text-slate-400 bg-slate-100/80 dark:bg-black/30 p-2 rounded-xl items-center justify-between">
             <span>GPS: {currentVehicleLat}, {currentVehicleLng}</span>
             <span className="text-emerald-600 font-bold">{transitProgress >= 1 ? '0 km/h' : '42 km/h'}</span>
           </div>
         </div>
 
         {/* Floating Quick Action Buttons */}
-        <div className="absolute bottom-3 right-3 flex items-center gap-2 pointer-events-auto">
+        <div className="absolute bottom-2.5 right-2.5 sm:bottom-3 sm:right-3 flex items-center gap-1.5 sm:gap-2 pointer-events-auto">
           <button
             onClick={() => setTransitProgress(0)}
-            className="p-2 rounded-xl bg-white/90 dark:bg-slate-900/90 hover:bg-white text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-white/10 shadow-sm cursor-pointer"
+            className="p-1.5 sm:p-2 rounded-lg sm:rounded-xl bg-white/90 dark:bg-slate-900/90 hover:bg-white text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-white/10 shadow-sm cursor-pointer"
             title="Reset to Dispatch Station"
           >
-            <RotateCcw className="w-4 h-4" />
+            <RotateCcw className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
           </button>
 
           <button

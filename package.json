@@ -9,8 +9,11 @@
     "build": "vite build",
     "start": "node server/index.js",
     "seed": "node server/seed/seeder.js",
+    "test:unit": "node --test server/test/unit.test.js",
     "test:matching": "node server/test/test-matching.js",
+    "test:api": "node server/test/test-api.js",
     "test:e2e": "node server/test/test-e2e-all.js",
+    "test": "npm run test:unit && npm run test:matching && npm run test:api && npm run test:e2e",
     "preview": "vite preview"
   },
   "dependencies": {

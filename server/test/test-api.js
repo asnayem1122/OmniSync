@@ -1,12 +1,16 @@
-import app from '../index.js';
-
 async function testApi() {
   console.log('🧪 Testing API endpoints...');
-  // Wait 1 second for server to initialize
-  await new Promise((r) => setTimeout(r, 1500));
 
   const PORT = process.env.PORT || 5000;
   const baseUrl = `http://localhost:${PORT}/api`;
+
+  try {
+    await fetch(`${baseUrl}/health`);
+  } catch (err) {
+    console.log('⚡ Server not running yet, importing server/index.js to start it...');
+    await import('../index.js');
+    await new Promise((r) => setTimeout(r, 2000));
+  }
 
   try {
     // 1. Health check

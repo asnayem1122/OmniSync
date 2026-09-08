@@ -125,14 +125,14 @@ export default function LiveTrackingTracker({
         {/* ---------------------------------------------------- */}
         {/* Horizontal Pipeline Stepper */}
         {/* ---------------------------------------------------- */}
-        <div className="pt-8 pb-4">
+        <div className="pt-6 sm:pt-8 pb-3 sm:pb-4">
           <div className="relative">
             {/* Background Line */}
-            <div className="absolute top-5 left-8 right-8 h-1 bg-slate-200 dark:bg-white/10 rounded-full -z-0" />
+            <div className="absolute top-4 sm:top-5 left-5 sm:left-8 right-5 sm:right-8 h-1 bg-slate-200 dark:bg-white/10 rounded-full -z-0" />
 
             {/* Glowing Active Fill Line */}
             <div
-              className="absolute top-5 left-8 h-1 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full transition-all duration-700 -z-0 shadow-[0_0_12px_rgba(16,185,129,0.7)]"
+              className="absolute top-4 sm:top-5 left-5 sm:left-8 h-1 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full transition-all duration-700 -z-0 shadow-[0_0_12px_rgba(16,185,129,0.7)]"
               style={{ width: `calc(${progressPercent}% * 0.88)` }}
             />
 
@@ -145,27 +145,27 @@ export default function LiveTrackingTracker({
                 const isUpcoming = idx > activeIndex;
 
                 return (
-                  <div key={step.id} className="flex flex-col items-center text-center max-w-[90px] sm:max-w-[120px]">
+                  <div key={step.id} className="flex flex-col items-center text-center max-w-[64px] sm:max-w-[120px]">
                     {/* Node Dot / Circle */}
                     <div
-                      className={`w-10 h-10 rounded-2xl flex items-center justify-center transition-all duration-300 shadow-sm ${
+                      className={`w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl flex items-center justify-center transition-all duration-300 shadow-sm ${
                         isCompleted
                           ? 'bg-emerald-500 text-white shadow-emerald-500/30'
                           : isCurrent
-                          ? 'bg-gradient-to-tr from-emerald-500 to-teal-500 text-white ring-4 ring-emerald-400/30 shadow-xl shadow-emerald-500/40 scale-110'
+                          ? 'bg-gradient-to-tr from-emerald-500 to-teal-500 text-white ring-2 sm:ring-4 ring-emerald-400/30 shadow-xl shadow-emerald-500/40 scale-105 sm:scale-110'
                           : 'bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-white/20 text-slate-400 dark:text-slate-500'
                       }`}
                     >
                       {isCompleted ? (
-                        <Check className="w-5 h-5 stroke-[3]" />
+                        <Check className="w-4 h-4 sm:w-5 sm:h-5 stroke-[3]" />
                       ) : (
-                        <Icon className="w-4 h-4" />
+                        <Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                       )}
                     </div>
 
                     {/* Step Label */}
                     <span
-                      className={`text-xs font-bold mt-3 ${
+                      className={`text-[10px] sm:text-xs font-bold mt-2 sm:mt-3 leading-tight ${
                         isCurrent
                           ? 'text-emerald-700 dark:text-emerald-300 font-extrabold'
                           : isCompleted

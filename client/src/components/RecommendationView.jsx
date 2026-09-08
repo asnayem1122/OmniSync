@@ -79,7 +79,7 @@ export default function RecommendationView({
       )}
 
       {/* Grid of Providers */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {matches.map((item, index) => {
           const { provider, matchScore, breakdown } = item;
           const isTopMatch = index === 0;
@@ -87,7 +87,7 @@ export default function RecommendationView({
           return (
             <div
               key={provider._id || index}
-              className={`spatial-card spatial-card-hover rounded-3xl p-6 sm:p-7 border relative overflow-hidden transition-all duration-300 ${
+              className={`spatial-card spatial-card-hover rounded-2xl sm:rounded-3xl p-4 sm:p-7 border relative overflow-hidden transition-all duration-300 ${
                 isTopMatch
                   ? 'border-emerald-500/50 bg-white/90 dark:bg-gradient-to-br dark:from-slate-900/80 dark:via-emerald-950/20 dark:to-slate-900/80 shadow-spatial-glow ring-1 ring-emerald-500/40'
                   : 'border-slate-200/80 dark:border-white/10 bg-white/75 dark:bg-slate-900/50 shadow-spatial-sm'
@@ -95,28 +95,28 @@ export default function RecommendationView({
             >
               {/* Best Match Banner */}
               {isTopMatch && (
-                <div className="absolute top-0 right-0 bg-gradient-to-l from-emerald-500 to-teal-500 text-white text-[10px] font-extrabold uppercase tracking-widest px-4 py-1 rounded-bl-xl shadow-md flex items-center gap-1.5">
+                <div className="absolute top-0 right-0 bg-gradient-to-l from-emerald-500 to-teal-500 text-white text-[9px] sm:text-[10px] font-extrabold uppercase tracking-widest px-3 sm:px-4 py-0.5 sm:py-1 rounded-bl-xl shadow-md flex items-center gap-1.5">
                   <Sparkles className="w-3 h-3 text-white" />
                   Top Match
                 </div>
               )}
 
-              <div className="flex items-start justify-between gap-4 mb-5">
-                <div className="flex items-start gap-3.5">
+              <div className="flex items-start justify-between gap-3 sm:gap-4 mb-4 sm:mb-5">
+                <div className="flex items-start gap-2.5 sm:gap-3.5">
                   <img
                     src={provider.avatar}
                     alt={provider.name}
-                    className="w-14 h-14 rounded-2xl object-cover border-2 border-emerald-500/40 shadow-md"
+                    className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl object-cover border-2 border-emerald-500/40 shadow-md shrink-0"
                   />
                   <div>
-                    <h3 className="font-extrabold text-slate-900 dark:text-white text-base sm:text-lg leading-snug">
+                    <h3 className="font-extrabold text-slate-900 dark:text-white text-sm sm:text-lg leading-snug">
                       {provider.name}
                     </h3>
-                    <p className="text-xs text-emerald-700 dark:text-emerald-400 font-bold">{provider.category}</p>
+                    <p className="text-[11px] sm:text-xs text-emerald-700 dark:text-emerald-400 font-bold">{provider.category}</p>
 
-                    <div className="flex items-center gap-2 mt-1 text-xs text-slate-500 dark:text-slate-400 font-medium">
+                    <div className="flex items-center gap-1.5 sm:gap-2 mt-0.5 sm:mt-1 text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 font-medium">
                       <div className="flex items-center text-amber-500 dark:text-amber-300 font-bold">
-                        <Star className="w-3.5 h-3.5 fill-amber-400 stroke-amber-400 mr-1" />
+                        <Star className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-amber-400 stroke-amber-400 mr-1" />
                         {provider.rating.toFixed(1)}
                         <span className="text-slate-400 font-normal ml-1">
                           ({provider.reviewsCount})
@@ -128,9 +128,12 @@ export default function RecommendationView({
                   </div>
                 </div>
 
-                {/* Circular Match Score Indicator */}
-                <div className="shrink-0">
+                {/* Circular Match Score Indicator (Responsive) */}
+                <div className="shrink-0 hidden sm:block">
                   <CircularProgress score={matchScore} size={76} strokeWidth={6.5} />
+                </div>
+                <div className="shrink-0 sm:hidden">
+                  <CircularProgress score={matchScore} size={60} strokeWidth={5.5} />
                 </div>
               </div>
 

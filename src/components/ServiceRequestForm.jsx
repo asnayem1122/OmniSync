@@ -227,39 +227,39 @@ export default function ServiceRequestForm({
   };
 
   return (
-    <div id="booking-section" className="py-10 max-w-5xl mx-auto">
-      <div className="bg-white dark:bg-slate-900/90 border border-slate-200/90 dark:border-white/10 rounded-3xl p-6 sm:p-10 lg:p-12 shadow-clean-card relative overflow-hidden">
+    <div id="booking-section" className="py-6 sm:py-10 max-w-5xl mx-auto">
+      <div className="bg-white dark:bg-slate-900/90 border border-slate-200/90 dark:border-white/10 rounded-2xl sm:rounded-3xl p-4 sm:p-10 lg:p-12 shadow-clean-card relative overflow-hidden">
         {/* Accent background glow */}
         <div className="absolute top-0 right-0 w-80 h-80 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none -z-0" />
 
         {/* Section Title Header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-8 mb-8 border-b border-slate-200 dark:border-white/10">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 sm:pb-8 mb-6 sm:mb-8 border-b border-slate-200 dark:border-white/10">
           <div>
-            <div className="contractor-tag mb-2">
+            <div className="contractor-tag mb-2 inline-flex">
               <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
               <span>Smart Collision Shield Dispatch</span>
             </div>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+            <h2 className="text-xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
               Book a Service Specialist
             </h2>
-            <p className="text-slate-600 dark:text-slate-300 text-sm mt-1 font-medium">
+            <p className="text-slate-600 dark:text-slate-300 text-xs sm:text-sm mt-1 font-medium">
               Multi-factor algorithmic matching: Availability (25) + Distance (25) + Rating (20) + Price (15) + Expertise (15)
             </p>
           </div>
 
-          <div className="flex items-center gap-2.5 bg-slate-50 dark:bg-slate-800/80 px-4 py-2 rounded-full border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-800 dark:text-white shadow-xs">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-            <span>16 Certified Providers Across 8 Categories</span>
+          <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-800/80 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border border-slate-200 dark:border-slate-700 text-[11px] sm:text-xs font-bold text-slate-800 dark:text-white shadow-xs self-start md:self-auto">
+            <span className="w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+            <span>16 Certified Specialists</span>
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-8">
+        <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-8">
           {/* 1. Service Category Selection (8 Categories) */}
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-3">
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-2 sm:mb-3">
               1. Select Service Category
             </label>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3">
               {CATEGORIES.map((cat) => {
                 const Icon = cat.icon;
                 const isSelected = selectedCategory === cat.id;
@@ -267,33 +267,33 @@ export default function ServiceRequestForm({
                   <div
                     key={cat.id}
                     onClick={() => setSelectedCategory(cat.id)}
-                    className={`cursor-pointer rounded-2xl p-4 transition-all duration-200 border flex flex-col justify-between ${
+                    className={`cursor-pointer rounded-xl sm:rounded-2xl p-3 sm:p-4 transition-all duration-200 border flex flex-col justify-between ${
                       isSelected
                         ? 'bg-[#EBF5F0] dark:bg-emerald-950/40 border-[#1E3A2B] dark:border-emerald-500 ring-2 ring-[#1E3A2B]/20 shadow-xs'
                         : 'bg-white dark:bg-slate-800/40 border-slate-200 dark:border-white/10 hover:border-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
                     }`}
                   >
-                    <div className="flex items-start justify-between mb-2">
+                    <div className="flex items-start justify-between mb-1.5 sm:mb-2">
                       <div
-                        className={`w-9 h-9 rounded-xl flex items-center justify-center ${
+                        className={`w-8 h-8 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl flex items-center justify-center ${
                           isSelected
                             ? 'bg-[#1E3A2B] text-white'
                             : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
                         }`}
                       >
-                        <Icon className="w-4 h-4" />
+                        <Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                       </div>
                       {isSelected && (
-                        <span className="text-[9px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#1E3A2B] text-white">
+                        <span className="text-[8px] sm:text-[9px] font-extrabold uppercase tracking-wider px-1.5 sm:px-2 py-0.5 rounded-full bg-[#1E3A2B] text-white">
                           Selected
                         </span>
                       )}
                     </div>
                     <div>
-                      <h3 className="font-bold text-slate-900 dark:text-white text-xs leading-snug">
+                      <h3 className="font-bold text-slate-900 dark:text-white text-[11px] sm:text-xs leading-snug">
                         {cat.title}
                       </h3>
-                      <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 line-clamp-2">
+                      <p className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-2">
                         {cat.desc}
                       </p>
                     </div>
@@ -364,11 +364,11 @@ export default function ServiceRequestForm({
                 <Clock className="w-4 h-4 text-[#1E3A2B] dark:text-emerald-400" />
                 3. Preferred Date & Time Slot
               </label>
-              <div className="grid grid-cols-3 gap-2 mb-3">
+              <div className="grid grid-cols-3 gap-1.5 sm:gap-2 mb-3">
                 <button
                   type="button"
                   onClick={() => setTimePreset('immediate')}
-                  className={`p-2.5 rounded-xl text-center text-xs font-bold transition-all cursor-pointer ${
+                  className={`p-2 sm:p-2.5 rounded-xl text-center text-[11px] sm:text-xs font-bold transition-all cursor-pointer ${
                     timePreset === 'immediate'
                       ? 'bg-[#1E3A2B] text-white shadow-sm'
                       : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 border border-slate-200 dark:border-slate-700'
@@ -379,7 +379,7 @@ export default function ServiceRequestForm({
                 <button
                   type="button"
                   onClick={() => setTimePreset('afternoon')}
-                  className={`p-2.5 rounded-xl text-center text-xs font-bold transition-all cursor-pointer ${
+                  className={`p-2 sm:p-2.5 rounded-xl text-center text-[11px] sm:text-xs font-bold transition-all cursor-pointer ${
                     timePreset === 'afternoon'
                       ? 'bg-[#1E3A2B] text-white shadow-sm'
                       : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 border border-slate-200 dark:border-slate-700'
@@ -390,7 +390,7 @@ export default function ServiceRequestForm({
                 <button
                   type="button"
                   onClick={() => setTimePreset('tomorrow')}
-                  className={`p-2.5 rounded-xl text-center text-xs font-bold transition-all cursor-pointer ${
+                  className={`p-2 sm:p-2.5 rounded-xl text-center text-[11px] sm:text-xs font-bold transition-all cursor-pointer ${
                     timePreset === 'tomorrow'
                       ? 'bg-[#1E3A2B] text-white shadow-sm'
                       : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 border border-slate-200 dark:border-slate-700'
@@ -553,7 +553,7 @@ export default function ServiceRequestForm({
             <label className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 block mb-2">
               6. Contact Information
             </label>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
               <div>
                 <label className="text-[11px] font-semibold text-slate-600 dark:text-slate-400 block mb-1">
                   Full Name
@@ -563,7 +563,7 @@ export default function ServiceRequestForm({
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
                   required
-                  className="w-full rounded-xl px-3.5 py-2.5 text-xs font-medium border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-[#1E3A2B]"
+                  className="w-full rounded-xl px-3.5 py-2.5 sm:py-3 text-sm font-medium border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-[#1E3A2B]"
                 />
               </div>
               <div>
@@ -575,7 +575,7 @@ export default function ServiceRequestForm({
                   value={customerPhone}
                   onChange={(e) => setCustomerPhone(e.target.value)}
                   required
-                  className="w-full rounded-xl px-3.5 py-2.5 text-xs font-medium border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-[#1E3A2B]"
+                  className="w-full rounded-xl px-3.5 py-2.5 sm:py-3 text-sm font-medium border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-[#1E3A2B]"
                 />
               </div>
               <div>
@@ -587,7 +587,7 @@ export default function ServiceRequestForm({
                   value={customerEmail}
                   onChange={(e) => setCustomerEmail(e.target.value)}
                   required
-                  className="w-full rounded-xl px-3.5 py-2.5 text-xs font-medium border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-[#1E3A2B]"
+                  className="w-full rounded-xl px-3.5 py-2.5 sm:py-3 text-sm font-medium border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-[#1E3A2B]"
                 />
               </div>
             </div>
@@ -597,7 +597,7 @@ export default function ServiceRequestForm({
           <button
             type="submit"
             disabled={isLoading}
-            className="forest-pill-btn w-full py-4 px-6 text-base font-bold shadow-lg gap-2 cursor-pointer disabled:opacity-50"
+            className="forest-pill-btn w-full py-3.5 sm:py-4 px-5 sm:px-6 text-sm sm:text-base font-bold shadow-lg gap-2 cursor-pointer disabled:opacity-50 justify-center"
           >
             {isLoading ? (
               <div className="flex items-center gap-2">
