@@ -12,6 +12,7 @@ import ProviderDashboard from './components/ProviderDashboard';
 import Footer from './components/Footer';
 import AuthModal from './components/AuthModal';
 import RatingReviewModal from './components/RatingReviewModal';
+import Testimonials from './components/ui/testimonials-13';
 
 const API_BASE = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
 
@@ -404,7 +405,11 @@ export default function App() {
               />
 
               {/* Trust, Before/After & Customer Reviews */}
-              <TrustAndShowcase onScheduleClick={scrollToBooking} />
+              <TrustAndShowcase
+                onScheduleClick={scrollToBooking}
+                providers={providers}
+                onSelectService={handleSelectServiceAndScroll}
+              />
             </div>
           )}
 
@@ -455,6 +460,14 @@ export default function App() {
           )}
 
           {activeTab === 'providers' && <ProviderDirectory providers={providers} />}
+          {activeTab === 'reviews' && (
+            <div className="space-y-6">
+              <Testimonials
+                providers={providers}
+                onSelectService={handleSelectServiceAndScroll}
+              />
+            </div>
+          )}
         </main>
       </div>
 

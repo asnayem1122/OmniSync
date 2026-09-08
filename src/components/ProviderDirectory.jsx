@@ -7,12 +7,14 @@ export default function ProviderDirectory({ providers = [] }) {
 
   const categories = [
     'All',
-    'Smart Lighting & Control',
-    'HVAC & Climate Automation',
-    'Smart Security & Access',
-    'Home Audio & Theater',
-    'Automated Blinds & Shading',
-    'Smart Appliance Integration',
+    'Appliance & Gadget Repair',
+    'Plumbing',
+    'Electrical',
+    'Cleaning & Pest Control',
+    'Home Maintenance',
+    'Moving & Shifting',
+    'Car Care & Repair',
+    'Personal Care',
   ];
 
   const filtered = providers.filter((p) => {

@@ -102,8 +102,10 @@ export default function Navbar({
           </button>
 
           <button
-            onClick={() => handleNavClick('request', 'reviews-section')}
-            className="transition-colors hover:text-[#1E3A2B] dark:hover:text-white cursor-pointer"
+            onClick={() => handleNavClick('reviews')}
+            className={`transition-colors hover:text-[#1E3A2B] dark:hover:text-white cursor-pointer ${
+              activeTab === 'reviews' ? 'text-[#1E3A2B] dark:text-emerald-400 font-bold' : ''
+            }`}
           >
             Reviews
           </button>
@@ -265,10 +267,12 @@ export default function Navbar({
               Why OmniSync
             </button>
             <button
-              onClick={() => handleNavClick('request', 'reviews-section')}
-              className="text-left py-2 px-3 rounded-xl hover:bg-slate-100 dark:hover:bg-white/5"
+              onClick={() => handleNavClick('reviews')}
+              className={`text-left py-2 px-3 rounded-xl hover:bg-slate-100 dark:hover:bg-white/5 ${
+                activeTab === 'reviews' ? 'text-[#1E3A2B] dark:text-emerald-400 font-bold' : ''
+              }`}
             >
-              Customer Reviews
+              Verified Reviews & Ratings
             </button>
             <button
               onClick={() => handleNavClick('tracking')}

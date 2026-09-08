@@ -111,6 +111,14 @@ export default function Footer({ onNavigateTab, onScheduleClick }) {
               </li>
               <li>
                 <button
+                  onClick={() => onNavigateTab?.('reviews')}
+                  className="hover:text-[#1E3A2B] dark:hover:text-emerald-400 transition-colors text-left"
+                >
+                  Verified Reviews & Ratings
+                </button>
+              </li>
+              <li>
+                <button
                   onClick={() => onNavigateTab?.('providers')}
                   className="hover:text-[#1E3A2B] dark:hover:text-emerald-400 transition-colors text-left"
                 >

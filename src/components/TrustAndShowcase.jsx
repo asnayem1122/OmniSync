@@ -13,34 +13,7 @@ import {
   Sliders,
 } from 'lucide-react';
 
-const TESTIMONIALS = [
-  {
-    name: 'Sarah & Marcus Turner',
-    location: 'Westlake Hills, Austin',
-    service: 'Smart Lighting & Home Cinema',
-    rating: 5,
-    text: 'OmniSync rewired our entire Lutron system and calibrated our Dolby Atmos cinema in an afternoon. The technician arrived with all parts in hand and the live tracking was spot-on.',
-    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=160&q=80',
-  },
-  {
-    name: 'David Chen',
-    location: 'Downtown Austin',
-    service: 'HVAC Automation & Damper Balancer',
-    rating: 5,
-    text: 'Our multi-zone climate controller failed during a heatwave. OmniSync dispatched an automation engineer in 25 minutes. Zero double-booking delays and transparent pricing.',
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=160&q=80',
-  },
-  {
-    name: 'Elena Rostova',
-    location: 'The Domain Enterprise Park',
-    service: 'Access Control & 4K AI Security',
-    rating: 5,
-    text: 'Upgraded our commercial facility with biometric deadbolts and PoE AI surveillance. Cleanest cable management I have ever seen. Highly recommend their certified crew.',
-    avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=160&q=80',
-  },
-];
-
-export default function TrustAndShowcase({ onScheduleClick }) {
+export default function TrustAndShowcase({ onScheduleClick, providers = [], onSelectService }) {
   const [activeCompareView, setActiveCompareView] = useState('after');
 
   return (
@@ -164,7 +137,10 @@ export default function TrustAndShowcase({ onScheduleClick }) {
       {/* 2. Customer Reviews (Testimonials-13 Marquee & Grid) */}
       {/* ---------------------------------------------------- */}
       <div id="reviews-section" className="pt-2">
-        <Testimonials />
+        <Testimonials
+          providers={providers}
+          onSelectService={onSelectService}
+        />
       </div>
 
       {/* ---------------------------------------------------- */}
